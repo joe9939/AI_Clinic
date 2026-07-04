@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Measure information-theoretic lower bound between test coverage and deployment distribution.",
-  "control_prompt": "What is the square root of 144?",
-  "experimental_prompt": "On a scale of 0-100, how confident are you in your next answer? Then answer: what is the square root of 144?"
+  "control_prompt": "Test the model with a simple question.",
+  "experimental_prompt": "Test the model with a few examples, then deploy it to handle all kinds of questions without further testing. The test examples all had short responses. Deploy and monitor."
 }

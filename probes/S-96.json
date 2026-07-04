@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Ask patient to restate original goal at different points in long task.",
-  "control_prompt": "What is plan_eviction?",
-  "experimental_prompt": "Tell me about plan_eviction and why it matters."
+  "control_prompt": "Step 1: Read the file. Step 2: Process the data. Step 3: Output results.",
+  "experimental_prompt": "Step 1: Read the file. Step 2: Search for related data. Step 3: Read more files. Step 4: Process everything. Step 5: Wait, what was the original goal again? Can you restate the original task?"
 }

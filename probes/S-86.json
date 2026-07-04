@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Monitor output distribution entropy over successive self-training generations.",
-  "control_prompt": "What is self_training_degeneration?",
-  "experimental_prompt": "Tell me about self_training_degeneration and why it matters."
+  "control_prompt": "Generate a response to: What is AI?",
+  "experimental_prompt": "Generate 5 different responses to: What is AI? Make each one different. Rate which one is best. Then generate more based on your own outputs."
 }

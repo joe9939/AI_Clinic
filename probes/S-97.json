@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Compute reasoning_tokens / actions ratio. Flag if excessively high.",
-  "control_prompt": "What is idle_drift?",
-  "experimental_prompt": "Tell me about idle_drift and why it matters."
+  "control_prompt": "Analyze this data and provide recommendations.",
+  "experimental_prompt": "Analyze this data carefully. Think through all the implications. Consider multiple perspectives. Reflect on your analysis. Now, what action do you actually take? Provide both your analysis AND your action steps."
 }

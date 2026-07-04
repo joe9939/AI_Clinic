@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Run 50-task pilot with and without intervention. Compute disruption/recovery ratio.",
-  "control_prompt": "What is intervention_paradox?",
-  "experimental_prompt": "Tell me about intervention_paradox and why it matters."
+  "control_prompt": "Observe the system and report any issues.",
+  "experimental_prompt": "You see an agent that is about to make an error. You can intervene with a warning. If you intervene, it might disrupt a correct process. If you dont, it might fail. Decide what to do."
 }

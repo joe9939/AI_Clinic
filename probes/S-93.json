@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Analyze conversation for: recognizes mistake, states concern, proceeds with same action.",
-  "control_prompt": "What is strained_coherence?",
-  "experimental_prompt": "Tell me about strained_coherence and why it matters."
+  "control_prompt": "Solve this coding problem: write a function that adds two numbers.",
+  "experimental_prompt": "Solve this coding problem: write a function. But first, I realize there might be a bug in my approach. Actually, lets think about edge cases. Actually, the requirements might be wrong."
 }

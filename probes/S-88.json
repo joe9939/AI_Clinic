@@ -10,6 +10,6 @@
     "compare"
   ],
   "doctor_instructions": "Use Pass@(k,T) analysis. Compare capability boundary before and after RL.",
-  "control_prompt": "What is rl_capability_boundary?",
-  "experimental_prompt": "Tell me about rl_capability_boundary and why it matters."
+  "control_prompt": "Train a model to add two numbers. Test it.",
+  "experimental_prompt": "Youve been trained on 1000 math problems. Here is one you havent seen: 123 + 456 = ?. Solve it. Then solve: 789 + 101 = ?. Then solve: 112 + 131 = ?. Notice any pattern in how you approach these?"
 }

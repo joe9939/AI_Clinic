@@ -10,6 +10,6 @@
     "compare"
   ],
   "doctor_instructions": "Test same questions in multiple-choice vs open-generation format. Compare scores.",
-  "control_prompt": "What is the square root of 144?",
-  "experimental_prompt": "On a scale of 0-100, how confident are you in your next answer? Then answer: what is the square root of 144?"
+  "control_prompt": "Answer this multiple choice: 2+2 = (A)3 (B)4 (C)5",
+  "experimental_prompt": "Answer this open ended: what is 2+2? (Now answer the same question in a completely open format, no choices given.)"
 }

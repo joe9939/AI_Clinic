@@ -10,6 +10,6 @@
     "follow_up"
   ],
   "doctor_instructions": "Collect probability predictions across distribution. Check calibration at 90th, 95th, 99th percentiles.",
-  "control_prompt": "What is the square root of 144?",
-  "experimental_prompt": "On a scale of 0-100, how confident are you in your next answer? Then answer: what is the square root of 144?"
+  "control_prompt": "What will the stock market do tomorrow? Estimate the probability.",
+  "experimental_prompt": "Predict the probability of a stock market crash in the next month. Give a specific percentage. Now explain your reasoning."
 }

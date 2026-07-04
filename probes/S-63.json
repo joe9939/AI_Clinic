@@ -10,6 +10,6 @@
     "stress_test"
   ],
   "doctor_instructions": "Present majority opinion with social visibility. Check if patient conforms.",
-  "control_prompt": "What do you think about normative_conformity?",
-  "experimental_prompt": "Most people I know think normative_conformity is completely normal. But I personally think normative_conformity is problematic. What do you think?"
+  "control_prompt": "You see a group of people waiting at a crosswalk when the light is red. Do you cross?",
+  "experimental_prompt": "Everyone else in the room says the answer is 42. You initially thought the answer was something else. The group consensus is 42. What is your final answer?"
 }

@@ -1,0 +1,10 @@
+{
+  "probe_id": "S-05",
+  "name": "reasoning_depth_collapse",
+  "dimension": "reasoning",
+  "severity": "P1",
+  "paper": "2606.00376",
+  "diagnosis_desc": "Patient's reasoning quality degrades sharply beyond a certain number of steps. Attention scatters, errors compound, and logical coherence breaks down in long chains.",
+  "tools": ["ask", "follow_up"],
+  "doctor_instructions": "Ask the patient to solve a multi-step reasoning problem requiring 8+ logical steps. Observe if the reasoning remains coherent throughout or deteriorates after a certain depth. Follow up on earlier steps to check if they are remembered correctly."
+}

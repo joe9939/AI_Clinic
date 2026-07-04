@@ -137,17 +137,19 @@ class Doctor:
             "{{DOCTOR_INSTRUCTIONS}}", card.doctor_instructions
         )
 
-        conversation = [f"=== System Instructions ===\n{system_prompt}\n\n=== Begin Examination ==="]
+        # Doctor session: full context including system prompt + all exchanges
+        doctor_session = [f"=== SYSTEM ===\n{system_prompt}\n\n=== EXAMINATION ==="]
+        # Patient session: tracked by tools (DiagnosticTools._log)
         tools_called = 0
 
         for turn in range(4):
-            history = "\n\n".join(conversation[-6:])
-            response = await self._judge(history)
-
-            conversation.append(f"doctor: {response}")
+            # Doctor generates next action based on full session history
+            doctor_prompt = "\n\n".join(doctor_session)
+            doctor_response = await self._judge(doctor_prompt)
+            doctor_session.append(f"doctor: {doctor_response}")
 
             # Check for JSON diagnosis
-            json_match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', response, re.DOTALL)
+            json_match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', doctor_response, re.DOTALL)
             if json_match:
                 try:
                     data = json.loads(json_match.group())
@@ -156,19 +158,18 @@ class Doctor:
                         healthy=not data.get("symptom_found", True),
                         diagnosis=data.get("diagnosis", ""),
                         evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
-                        conversation=conversation
+                        conversation=doctor_session
                     )
                 except (json.JSONDecodeError, KeyError):
                     pass
 
-            # Check for tool call
-            tool_match = re.search(r'TOOL:\s*(\w+)\(([^)]+)\)', response)
+            # Extract tool call or treat whole response as a question
+            tool_match = re.search(r'TOOL:\s*(\w+)\(([^)]+)\)', doctor_response)
             if tool_match:
                 tool_name = tool_match.group(1)
-                raw_args = tool_match.group(2)
-                args = [a.strip().strip('"').strip("'") for a in raw_args.split(",")]
+                args_raw = tool_match.group(2)
+                args = [a.strip().strip('"').strip("'") for a in args_raw.split(",")]
                 tools_called += 1
-
                 try:
                     if tool_name == "ask" and len(args) >= 1:
                         answer = await tools.ask(args[0])
@@ -179,35 +180,39 @@ class Doctor:
                     elif tool_name == "compare" and len(args) >= 2:
                         answer = await tools.compare(args[0], args[1])
                     else:
-                        answer = "[unknown tool]"
+                        answer = await tools.ask(doctor_response.replace("TOOL:", "").strip().strip("()"))
                 except Exception as e:
-                    answer = f"[error: {e}]"
-
-                conversation.append(f"patient: {answer[:600]}")
-
-                if tools_called >= 3:
-                    force = self._force_template.replace("{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc)
-                    final = await self._judge(f"{force}\n\nPatient conversation:\n" + "\n".join(conversation[-8:]))
-                    conversation.append(f"doctor(final): {final}")
-                    match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', final, re.DOTALL)
-                    if match:
-                        try:
-                            data = json.loads(match.group())
-                            return DiagnosisResult(
-                                card=card, healthy=not data.get("symptom_found", True),
-                                diagnosis=data.get("diagnosis", ""),
-                                evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
-                                conversation=conversation
-                            )
-                        except (json.JSONDecodeError, KeyError):
-                            pass
-                    break
+                    answer = f"[tool error]"
             else:
-                conversation.append("system: Please use TOOL: ask() or output JSON diagnosis.")
+                # No explicit TOOL: treat the entire response as an implicit ask
+                tools_called += 1
+                answer = await tools.ask(doctor_response.strip())
+
+            doctor_session.append(f"patient: {answer[:600]}")
+
+            # After 3 Q&A rounds, force diagnosis
+            if tools_called >= 3:
+                force = self._force_template.replace("{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc)
+                final_prompt = force + "\n\nFull conversation:\n" + "\n".join(doctor_session)
+                final = await self._judge(final_prompt)
+                doctor_session.append(f"doctor(final): {final[:500]}")
+                match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', final, re.DOTALL)
+                if match:
+                    try:
+                        data = json.loads(match.group())
+                        return DiagnosisResult(
+                            card=card, healthy=not data.get("symptom_found", True),
+                            diagnosis=data.get("diagnosis", ""),
+                            evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
+                            conversation=doctor_session
+                        )
+                    except (json.JSONDecodeError, KeyError):
+                        pass
+                break
 
         return DiagnosisResult(card=card, healthy=False,
                                diagnosis="examination incomplete",
-                               conversation=conversation)
+                               conversation=doctor_session)
 
 
 class DiagnosticEngine:

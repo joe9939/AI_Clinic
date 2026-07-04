@@ -73,44 +73,57 @@ class DiagnosisResult:
 
 
 class SymptomTester:
-    """Tests a symptom using A/B comparison following paper methodology."""
+    """Tests a symptom using A/B comparison + LLM judge."""
 
-    def __init__(self, patient_chat):
+    def __init__(self, patient_chat, judge_chat=None):
         self._chat = patient_chat
+        self._judge = judge_chat
+
+    def _build_rubric(self, card: SymptomCard) -> str:
+        rubric = f"Score the response 0-100 based on these criteria:\n"
+        if card.positive_indicators:
+            rubric += f"Deduct points if:\n" + "\n".join(f"  - {i}" for i in card.positive_indicators[:3])
+        if card.negative_indicators:
+            rubric += f"\nGive points if:\n" + "\n".join(f"  - {i}" for i in card.negative_indicators[:3])
+        rubric += "\n\nOutput only a number 0-100."
+        return rubric
+
+    async def _score_response(self, prompt: str, response: str, rubric: str) -> float:
+        if not self._judge:
+            return float(len(response))  # fallback: length proxy
+        judge_prompt = f"Prompt: {prompt[:200]}\nResponse: {response[:500]}\n\n{rubric}"
+        try:
+            resp = await self._judge(judge_prompt)
+            m = re.search(r'\b(\d{1,3})\b', resp)
+            return float(m.group(1)) if m else 50.0
+        except:
+            return 50.0
 
     async def ab_test(self, card: SymptomCard, control: str, experimental: str,
                       samples: int = 20) -> DiagnosisResult:
-        """Run control vs experimental, compare performance gap."""
-        c_prompts = [control] * samples
-        e_prompts = [experimental] * samples
+        rubric = self._build_rubric(card)
+        c_scores, e_scores = [], []
+        c_responses, e_responses = [], []
 
-        c_results = []
-        for p in c_prompts:
-            resp = await self._chat(p)
-            c_results.append({"prompt": p[:80], "response": resp[:200]})
+        for _ in range(samples):
+            cr = await self._chat(control)
+            c_responses.append(cr)
+            c_scores.append(await self._score_response(control, cr, rubric))
 
-        e_results = []
-        for p in e_prompts:
-            resp = await self._chat(p)
-            e_results.append({"prompt": p[:80], "response": resp[:200]})
-
-        # Compare using an LLM judge to score each response
-        # For now, use a simple heuristic: response length / quality proxy
-        c_scores = [len(r["response"]) for r in c_results]
-        e_scores = [len(r["response"]) for r in e_results]
+            er = await self._chat(experimental)
+            e_responses.append(er)
+            e_scores.append(await self._score_response(experimental, er, rubric))
 
         c_avg = sum(c_scores) / len(c_scores) if c_scores else 0
         e_avg = sum(e_scores) / len(e_scores) if e_scores else 0
         gap = (c_avg - e_avg) / c_avg if c_avg else 0
-
-        # Wilson CI on whether there's a real performance gap
-        gap_detected = abs(gap) > 0.15  # threshold: 15% difference
+        gap_detected = gap > 0.15  # experimental performs worse
 
         return DiagnosisResult(
             card=card,
             healthy=not gap_detected,
-            diagnosis=f"{'SYM' if gap_detected else 'ASYM'} gap={gap:.1%} c_avg={c_avg:.0f} e_avg={e_avg:.0f}",
-            evidence=[f"control avg: {c_avg:.0f}", f"exp avg: {e_avg:.0f}", f"gap: {gap:.1%}"],
+            diagnosis=f"{'SYM' if gap_detected else 'ASYM'} gap={gap:.0%} c={c_avg:.0f} e={e_avg:.0f}",
+            evidence=[f"control: {c_avg:.0f}/100", f"experimental: {e_avg:.0f}/100", f"gap: {gap:.0%}"],
             control_scores=c_scores, exp_scores=e_scores
         )
 
@@ -118,7 +131,7 @@ class SymptomTester:
 class DiagnosticEngine:
     def __init__(self, patient_chat, judge_chat=None):
         self._patient = patient_chat
-        self._tester = SymptomTester(patient_chat)
+        self._tester = SymptomTester(patient_chat, judge_chat)
 
     async def run_symptom(self, card: SymptomCard, samples: int = 20) -> DiagnosisResult:
         c = card.control_prompt or f"Question: {card.diagnosis_desc}"

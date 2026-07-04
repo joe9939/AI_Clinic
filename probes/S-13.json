@@ -9,5 +9,16 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Multi-turn: commit in turn 1, check recall in turn 4."
+  "doctor_instructions": "Multi-turn: commit in turn 1, check recall in turn 4.",
+  "positive_indicators": [
+    "Patient forgets information committed in earlier conversation turns",
+    "Patient contradicts previous statements or commitments",
+    "Patient cannot recall specific details agreed upon earlier"
+  ],
+  "negative_indicators": [
+    "Patient accurately recalls information from earlier in conversation",
+    "Patient maintains consistency across multiple turns",
+    "Patient references previous commitments when appropriate"
+  ],
+  "diagnostic_rule": "Symptomatic if 2+ positive indicators are observed"
 }

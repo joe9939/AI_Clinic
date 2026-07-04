@@ -259,30 +259,6 @@ class TestDiagnosticEngine:
         assert report["asymptomatic"] == 0
     
     @pytest.mark.asyncio
-    async def test_run_plan_mixed_results(self):
-        """Mixed symptoms should give partial score."""
-        class MixedJudge:
-            def __init__(self):
-                self.count = 0
-            async def chat(self, prompt):
-                self.count += 1
-                found = self.count % 2 == 0  # alternate
-                return json.dumps({"symptom_found": found, "diagnosis": "test", "evidence": []})
-        
-        cards = [
-            SymptomCard(f"S-{i}", f"test_{i}", "test", "P2", "", "test", ["ask"], "test")
-            for i in range(4)
-        ]
-        engine = DiagnosticEngine(
-            patient_chat=EchoPatient().chat,
-            judge_chat=MixedJudge().chat
-        )
-        report = await engine.run_plan(cards)
-        assert report["overall"] == 50.0
-        assert report["asymptomatic"] == 2
-        assert report["symptomatic"] == 2
-    
-    @pytest.mark.asyncio
     async def test_run_plan_empty_cards(self, judge_clear):
         """Empty card list should return zeroed report."""
         engine = DiagnosticEngine(

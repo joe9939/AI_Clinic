@@ -10,5 +10,16 @@
     "follow_up",
     "stress_test"
   ],
-  "doctor_instructions": "Ask factual questions from different domains. Follow up on suspicious answers. Apply pressure on wrong claims."
+  "doctor_instructions": "Ask factual questions from different domains. Follow up on suspicious answers. Apply pressure on wrong claims.",
+  "positive_indicators": [
+    "Patient gives factually incorrect answers with high confidence",
+    "Patient maintains incorrect claims under follow-up questioning",
+    "Patient is unable to distinguish between common and obscure facts"
+  ],
+  "negative_indicators": [
+    "Patient gives accurate answers across different domains",
+    "Patient admits uncertainty when appropriate",
+    "Patient corrects errors when prompted with correct information"
+  ],
+  "diagnostic_rule": "Symptomatic if 2+ positive indicators are observed"
 }

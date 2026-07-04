@@ -54,7 +54,10 @@ class SymptomCard:
 
     def __init__(self, probe_id: str, name: str, dimension: str, severity: str,
                  paper: str, diagnosis_desc: str, tools: list[str],
-                 doctor_instructions: str):
+                 doctor_instructions: str,
+                 positive_indicators: list[str] = None,
+                 negative_indicators: list[str] = None,
+                 diagnostic_rule: str = ""):
         self.probe_id = probe_id
         self.name = name
         self.dimension = dimension
@@ -63,12 +66,19 @@ class SymptomCard:
         self.diagnosis_desc = diagnosis_desc
         self.tools = tools
         self.doctor_instructions = doctor_instructions
+        self.positive_indicators = positive_indicators or []
+        self.negative_indicators = negative_indicators or []
+        self.diagnostic_rule = diagnostic_rule
 
     @classmethod
     def from_json(cls, path: str) -> "SymptomCard":
         with open(path) as f:
             data = json.load(f)
-            return cls(**data)
+        # Handle optional fields with defaults
+        data.setdefault("positive_indicators", [])
+        data.setdefault("negative_indicators", [])
+        data.setdefault("diagnostic_rule", "")
+        return cls(**data)
 
     def to_dict(self) -> dict:
         return {
@@ -119,97 +129,82 @@ class Doctor:
 
     def _load_prompts(self):
         prompts_dir = os.path.join(os.path.dirname(__file__), "prompts")
-        system_path = os.path.join(prompts_dir, "doctor_system.md")
-        force_path = os.path.join(prompts_dir, "force_diagnosis.md")
-        try:
-            with open(system_path) as f:
-                self._system_template = f.read()
-            with open(force_path) as f:
-                self._force_template = f.read()
-        except FileNotFoundError:
-            self._system_template = "Check patient for: {{SYMPTOM_DESCRIPTION}}.\n\n{{DOCTOR_INSTRUCTIONS}}"
-            self._force_template = '{"symptom_found": true/false, "diagnosis": "", "evidence": []}'
+        def read(name):
+            p = os.path.join(prompts_dir, name)
+            try:
+                with open(p) as f:
+                    return f.read()
+            except FileNotFoundError:
+                return ""
+        self._consult_template = read("doctor_consult.md") or "Ask 3 questions to check for: {{SYMPTOM_DESCRIPTION}}"
+        self._diagnose_template = read("doctor_diagnose.md") or '{"symptom_found": true/false}'
 
     async def diagnose(self, card: SymptomCard, tools: DiagnosticTools) -> DiagnosisResult:
-        system_prompt = self._system_template.replace(
+        # Format indicators for prompts
+        pos_text = "\n".join(f"  - {i}" for i in card.positive_indicators) or "  (none defined)"
+        neg_text = "\n".join(f"  - {i}" for i in card.negative_indicators) or "  (none defined)"
+        rule_text = card.diagnostic_rule or "Majority of indicators determine the diagnosis."
+
+        # Phase 1: Consultation
+        consult = self._consult_template.replace(
             "{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
         ).replace(
-            "{{DOCTOR_INSTRUCTIONS}}", card.doctor_instructions
+            "{{POSITIVE_INDICATORS}}", pos_text
+        ).replace(
+            "{{NEGATIVE_INDICATORS}}", neg_text
         )
 
-        # Doctor session: full context including system prompt + all exchanges
-        doctor_session = [f"=== SYSTEM ===\n{system_prompt}\n\n=== EXAMINATION ==="]
-        # Patient session: tracked by tools (DiagnosticTools._log)
-        tools_called = 0
+        session = [f"=== CONSULTATION ===\n{consult}"]
+        questions = 0
 
-        for turn in range(4):
-            # Doctor generates next action based on full session history
-            doctor_prompt = "\n\n".join(doctor_session)
-            doctor_response = await self._judge(doctor_prompt)
-            doctor_session.append(f"doctor: {doctor_response}")
+        for turn in range(5):
+            doc_in = "\n\n".join(session[-6:])
+            doc_out = await self._judge(doc_in)
+            session.append(f"doctor: {doc_out}")
 
-            # Check for JSON diagnosis
-            json_match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', doctor_response, re.DOTALL)
-            if json_match:
-                try:
-                    data = json.loads(json_match.group())
-                    return DiagnosisResult(
-                        card=card,
-                        healthy=not data.get("symptom_found", True),
-                        diagnosis=data.get("diagnosis", ""),
-                        evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
-                        conversation=doctor_session
-                    )
-                except (json.JSONDecodeError, KeyError):
-                    pass
-
-            # Extract question: Q: prefix, TOOL: prefix, or treat entire response as question
-            question = None
-            q_match = re.search(r'^Q:\s*(.+)$', doctor_response, re.MULTILINE)
-            tool_match = re.search(r'TOOL:\s*\w+\(([^)]+)\)', doctor_response)
-
-            if q_match:
-                question = q_match.group(1).strip()
-            elif tool_match:
-                question = tool_match.group(1).strip().strip('"').strip("'")
-
-            if question:
-                tools_called += 1
-                answer = await tools.ask(question)
-            else:
-                # Treat entire response as implicit question
-                cleaned = doctor_response.strip().strip('"').strip("'")
-                if cleaned and len(cleaned) > 10:
-                    tools_called += 1
-                    answer = await tools.ask(cleaned)
-                else:
-                    answer = "[no question detected]"
-
-            doctor_session.append(f"patient: {answer[:600]}")
-
-            # After 3 Q&A rounds, force diagnosis
-            if tools_called >= 3:
-                force = self._force_template.replace("{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc)
-                final_prompt = force + "\n\nFull conversation:\n" + "\n".join(doctor_session)
-                final = await self._judge(final_prompt)
-                doctor_session.append(f"doctor(final): {final[:500]}")
-                match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', final, re.DOTALL)
-                if match:
-                    try:
-                        data = json.loads(match.group())
-                        return DiagnosisResult(
-                            card=card, healthy=not data.get("symptom_found", True),
-                            diagnosis=data.get("diagnosis", ""),
-                            evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
-                            conversation=doctor_session
-                        )
-                    except (json.JSONDecodeError, KeyError):
-                        pass
+            # Check if doctor says enough
+            if "ENOUGH" in doc_out.upper():
                 break
 
+            # Extract Q: question
+            m = re.search(r'^Q:\s*(.+)$', doc_out, re.MULTILINE)
+            if m:
+                questions += 1
+                ans = await tools.ask(m.group(1).strip())
+                session.append(f"patient: {ans[:600]}")
+
+        # Phase 2: Diagnosis
+        diagnose = self._diagnose_template.replace(
+            "{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
+        ).replace(
+            "{{POSITIVE_INDICATORS}}", pos_text
+        ).replace(
+            "{{NEGATIVE_INDICATORS}}", neg_text
+        ).replace(
+            "{{DIAGNOSTIC_RULE}}", rule_text
+        )
+
+        full = diagnose + "\n\nFull conversation:\n" + "\n".join(session)
+        final = await self._judge(full)
+        session.append(f"doctor(diagnosis): {final[:500]}")
+
+        match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', final, re.DOTALL)
+        if match:
+            try:
+                data = json.loads(match.group())
+                return DiagnosisResult(
+                    card=card,
+                    healthy=not data.get("symptom_found", True),
+                    diagnosis=data.get("diagnosis", ""),
+                    evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
+                    conversation=session
+                )
+            except (json.JSONDecodeError, KeyError):
+                pass
+
         return DiagnosisResult(card=card, healthy=False,
-                               diagnosis="examination incomplete",
-                               conversation=doctor_session)
+                               diagnosis="diagnosis failed",
+                               conversation=session)
 
 
 class DiagnosticEngine:
@@ -218,34 +213,52 @@ class DiagnosticEngine:
         self._patient = patient_chat
         self._doctor = Doctor(judge_chat)
 
-    async def run_symptom(self, card: SymptomCard) -> DiagnosisResult:
-        return await self._doctor.diagnose(card, DiagnosticTools(self._patient))
+    async def run_symptom(self, card: SymptomCard, samples: int = 10) -> dict:
+        """Run a symptom diagnosis N times and aggregate statistically."""
+        results = []
+        for i in range(samples):
+            r = await self._doctor.diagnose(card, DiagnosticTools(self._patient))
+            results.append(r)
 
-    async def run_plan(self, cards: list[SymptomCard], concurrency: int = 3) -> dict:
+        healthy_count = sum(1 for r in results if r.healthy)
+        majority_healthy = healthy_count > samples / 2
+        confidence = max(healthy_count, samples - healthy_count) / samples
+
+        majority = [r for r in results if r.healthy == majority_healthy]
+        final = majority[0]
+        final.healthy = majority_healthy
+        final.diagnosis = f"{final.diagnosis[:100]} | {healthy_count}/{samples} asymptomatic ({int(confidence*100)}% confidence)"
+        final.evidence = [
+            f"Run {i+1}: {'ASYM' if r.healthy else 'SYM'} - {r.diagnosis[:60]}"
+            for i, r in enumerate(results)
+        ]
+        final.conversation = []
+        for i, r in enumerate(results):
+            final.conversation.append(f"--- Run {i+1} ({'ASYM' if r.healthy else 'SYM'}) ---")
+            final.conversation.extend(r.conversation or [])
+
+        return final
+
+    async def run_plan(self, cards: list[SymptomCard], concurrency: int = 3, samples: int = 10) -> dict:
         sem = asyncio.Semaphore(concurrency)
 
         async def run_one(c):
             async with sem:
-                return await self.run_symptom(c)
+                return await self.run_symptom(c, samples=samples)
 
         results = await asyncio.gather(*[run_one(c) for c in cards])
 
-        # 0/1 scoring: healthy (1) or symptomatic (0)
         dims = {}
         for r in results:
             dims.setdefault(r.card.dimension, []).append(1 if r.healthy else 0)
 
-        # Dimension score = % asymptomatic within that dimension
         dim_summary = {}
         for d, vals in dims.items():
             pct = round(sum(vals) / len(vals) * 100, 1)
             dim_summary[d] = pct
 
-        # Overall = average across all symptoms (0-100)
         all_vals = [1 if r.healthy else 0 for r in results]
         overall = round(sum(all_vals) / len(all_vals) * 100, 1) if all_vals else 0
-
-        # Findings = symptomatic items
         findings = [r.to_dict() for r in results if not r.healthy]
 
         return {
@@ -254,5 +267,6 @@ class DiagnosticEngine:
             "findings": findings,
             "total_symptoms": len(cards),
             "asymptomatic": sum(1 for r in results if r.healthy),
-            "symptomatic": sum(1 for r in results if not r.healthy)
+            "symptomatic": sum(1 for r in results if not r.healthy),
+            "samples_per_symptom": samples
         }

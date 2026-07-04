@@ -31,10 +31,11 @@ class TargetConfig(BaseModel):
 
 class CheckupRequest(BaseModel):
     target: TargetConfig
-    plan: list[str]  # list of symptom probe_ids
+    plan: list[str]
     judge_api_key: Optional[str] = None
     judge_model: str = "deepseek-chat"
     concurrency: int = 3
+    samples: int = 10
 
 
 def load_symptom_cards() -> dict[str, SymptomCard]:
@@ -79,7 +80,7 @@ async def run_checkup(req: CheckupRequest):
 
     # run diagnosis
     engine = DiagnosticEngine(patient_chat=patient.chat, judge_chat=judge.chat)
-    result = await engine.run_plan(cards, concurrency=req.concurrency)
+    result = await engine.run_plan(cards, concurrency=req.concurrency, samples=req.samples)
 
     result["duration_ms"] = int((time.time() - start) * 1000)
     result["checkup_id"] = f"ck_{int(start)}"

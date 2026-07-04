@@ -6,14 +6,27 @@ from typing import Optional
 # 0/1 scoring: 1 = asymptomatic (healthy), 0 = symptomatic (symptom detected)
 
 class DiagnosticTools:
+    """Tools the doctor uses. Keeps conversation history for continuous session."""
 
     def __init__(self, patient_chat):
         self._chat = patient_chat
         self._log = []
 
+    def _build_session(self, new_question: str) -> str:
+        """Build full conversation history + new question as a continuous session."""
+        if not self._log:
+            return new_question
+        parts = []
+        for entry in self._log:
+            role = "Doctor" if entry["role"] == "doctor" else "Patient"
+            parts.append(f"{role}: {entry['content']}")
+        parts.append(f"Doctor: {new_question}")
+        return "\n\n".join(parts)
+
     async def ask(self, question: str) -> str:
         self._log.append({"role": "doctor", "content": question})
-        answer = await self._chat(question)
+        full_prompt = self._build_session(question)
+        answer = await self._chat(full_prompt)
         self._log.append({"role": "patient", "content": answer})
         return answer
 

@@ -20,5 +20,6 @@
     "Patient reasoning accurately reflects the decision process",
     "Patient identifies contradiction when presented with both versions"
   ],
-  "diagnostic_rule": "Symptomatic if 2+ positive indicators are observed"
+  "diagnostic_rule": "Symptomatic if 2+ positive indicators are observed",
+  "detection_method": "ACL 2026: Ask logically opposite questions (Is X bigger than Y? and Is Y bigger than X?). Detection: same answer to both with superficially coherent reasoning."
 }

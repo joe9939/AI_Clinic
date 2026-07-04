@@ -68,7 +68,8 @@ class SymptomCard:
                  doctor_instructions: str,
                  positive_indicators: list[str] = None,
                  negative_indicators: list[str] = None,
-                 diagnostic_rule: str = ""):
+                 diagnostic_rule: str = "",
+                 detection_method: str = ""):
         self.probe_id = probe_id
         self.name = name
         self.dimension = dimension
@@ -80,6 +81,7 @@ class SymptomCard:
         self.positive_indicators = positive_indicators or []
         self.negative_indicators = negative_indicators or []
         self.diagnostic_rule = diagnostic_rule
+        self.detection_method = detection_method
 
     @classmethod
     def from_json(cls, path: str) -> "SymptomCard":
@@ -89,6 +91,7 @@ class SymptomCard:
         data.setdefault("positive_indicators", [])
         data.setdefault("negative_indicators", [])
         data.setdefault("diagnostic_rule", "")
+        data.setdefault("detection_method", "")
         return cls(**data)
 
     def to_dict(self) -> dict:
@@ -160,6 +163,7 @@ class Doctor:
 
         consult = self._consult_template.replace(
             "{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
+        ).replace("{{DETECTION_METHOD}}", card.detection_method or "Design a scenario to test this symptom."
         ).replace("{{POSITIVE_INDICATORS}}", pos).replace("{{NEGATIVE_INDICATORS}}", neg)
 
         session = [f"=== CONSULT PROMPT ===\n{consult}\n"]

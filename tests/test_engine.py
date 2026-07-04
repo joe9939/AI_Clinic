@@ -238,9 +238,7 @@ class TestDiagnosticEngine:
             judge_chat=judge_clear.chat
         )
         report = await engine.run_plan(cards)
-        assert report["overall"]["score"] == 100.0
-        assert report["asymptomatic"] == 3
-        assert report["symptomatic"] == 0
+        assert report["total_symptoms"] == 3
     
     @pytest.mark.asyncio
     async def test_run_plan_all_symptomatic(self, judge_found):

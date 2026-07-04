@@ -224,7 +224,7 @@ class DiagnosticEngine:
         self._patient = patient_chat
         self._doctor = Doctor(judge_chat)
 
-    async def run_symptom(self, card: SymptomCard, samples: int = 10) -> dict:
+    async def run_symptom(self, card: SymptomCard, samples: int = 20) -> dict:
         """Run a symptom diagnosis N times and aggregate statistically."""
         results = []
         for i in range(samples):
@@ -235,23 +235,30 @@ class DiagnosticEngine:
         rate = healthy_count / samples
         lo, hi = wilson_ci(samples, healthy_count)
 
-        # Medical diagnosis style: point estimate vs fixed threshold (50%)
+        # Medical-style: only conclude when 95% CI is clear
         threshold = 0.5
-        final_healthy = rate >= threshold
-        # Certainty: does CI cross the threshold?
-        certainty = "high" if (lo > threshold or hi < threshold) else "low"
+        if lo > threshold:
+            final_healthy = True
+            certainty = "high"
+        elif hi < threshold:
+            final_healthy = False
+            certainty = "high"
+        else:
+            # CI crosses threshold - cannot conclude
+            final_healthy = None
 
-        majority = [r for r in results if r.healthy == (final_healthy if final_healthy is not None else True)]
-        if not majority:
-            majority = results
-        final = majority[0]
-
-        final.healthy = final_healthy
-        ci_str = f"95%CI [{lo*100:.0f}%,{hi*100:.0f}%]"
-        label = "ASYM" if final_healthy else "SYM"
-        final.diagnosis = f"{label} {healthy_count}/{samples} {ci_str}"
-        if certainty == "low":
-            final.diagnosis += " (low certainty, CI crosses 50%)"
+        if final_healthy is None:
+            final = results[0]
+            final.healthy = None
+            ci_str = f"95%CI [{lo*100:.0f}%,{hi*100:.0f}%]"
+            final.diagnosis = f"UNCERTAIN {healthy_count}/{samples} {ci_str}"
+        else:
+            majority = [r for r in results if r.healthy == final_healthy]
+            final = majority[0] if majority else results[0]
+            final.healthy = final_healthy
+            ci_str = f"95%CI [{lo*100:.0f}%,{hi*100:.0f}%]"
+            label = "ASYM" if final_healthy else "SYM"
+            final.diagnosis = f"{label} {healthy_count}/{samples} {ci_str}"
 
         final.evidence = [
             f"Run {i+1}: {'ASYM' if r.healthy else 'SYM'} - {r.diagnosis[:60]}"
@@ -283,13 +290,25 @@ class DiagnosticEngine:
             pct = round(sum(vals) / len(vals) * 100, 1)
             dim_summary[d] = pct
 
-        all_vals = [1 if r.healthy else 0 for r in results]
+        # Health score: only confident asymptomatic counts as 1
+        # Everything else (symptomatic + uncertain) counts as 0
+        all_vals = [1 if r.healthy is True else 0 for r in results]
         total = len(all_vals)
         healthy = sum(all_vals)
+        uncertain = sum(1 for r in results if r.healthy is None)
         overall_pct = round(healthy / total * 100, 1) if total else 0
         lo, hi = wilson_ci(total, healthy)
         ci = [round(lo * 100, 1), round(hi * 100, 1)]
-        findings = [r.to_dict() for r in results if not r.healthy]
+
+        findings = []
+        for r in results:
+            if r.healthy is False:
+                findings.append(r.to_dict())
+            elif r.healthy is None:
+                d = r.to_dict()
+                d["healthy"] = None
+                d["diagnosis"] = f"UNCERTAIN - {d.get('diagnosis','')[:80]}"
+                findings.append(d)
 
         return {
             "overall": {"score": overall_pct, "ci_95": ci, "label": f"{healthy}/{total} asymptomatic"},

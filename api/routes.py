@@ -35,7 +35,7 @@ class CheckupRequest(BaseModel):
     judge_api_key: Optional[str] = None
     judge_model: str = "deepseek-chat"
     concurrency: int = 3
-    samples: int = 10
+    samples: int = 20
 
 
 def load_symptom_cards() -> dict[str, SymptomCard]:

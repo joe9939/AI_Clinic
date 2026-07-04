@@ -105,12 +105,16 @@ class SymptomCard:
 class DiagnosisResult:
 
     def __init__(self, card: SymptomCard, healthy: bool, diagnosis: str = "", evidence: list = None,
-                 conversation: list = None):
+                 conversation: list = None, doctor_session: list = None, patient_log: list = None,
+                 diagnosis_session: list = None):
         self.card = card
         self.healthy = healthy
         self.diagnosis = diagnosis
         self.evidence = evidence or []
-        self.conversation = conversation or []
+        self.conversation = conversation or []  # raw doctor session
+        self.doctor_session = doctor_session or []  # judge model full conversation
+        self.patient_log = patient_log or []  # patient Q&A log
+        self.diagnosis_session = diagnosis_session or []  # diagnosis phase conversation
 
     def to_dict(self) -> dict:
         return {
@@ -165,24 +169,25 @@ class Doctor:
             "{{NEGATIVE_INDICATORS}}", neg_text
         )
 
-        session = [f"=== CONSULTATION ===\n{consult}"]
+        doctor_session = [f"=== CONSULT PROMPT ===\n{consult}\n"]
+        patient_log = []
         questions = 0
 
         for turn in range(5):
-            doc_in = "\n\n".join(session[-6:])
+            doc_in = "\n\n".join(doctor_session[-6:])
             doc_out = await self._judge(doc_in)
-            session.append(f"doctor: {doc_out}")
+            doctor_session.append(f"doctor: {doc_out}")
 
-            # Check if doctor says enough
             if "ENOUGH" in doc_out.upper():
                 break
 
-            # Extract Q: question
             m = re.search(r'^Q:\s*(.+)$', doc_out, re.MULTILINE)
             if m:
                 questions += 1
-                ans = await tools.ask(m.group(1).strip())
-                session.append(f"patient: {ans[:600]}")
+                q = m.group(1).strip()
+                ans = await tools.ask(q)
+                patient_log.append({"q": q, "a": ans[:600]})
+                doctor_session.append(f"patient: {ans[:600]}")
 
         # Phase 2: Diagnosis
         diagnose = self._diagnose_template.replace(
@@ -195,9 +200,9 @@ class Doctor:
             "{{DIAGNOSTIC_RULE}}", rule_text
         )
 
-        full = diagnose + "\n\nFull conversation:\n" + "\n".join(session)
-        final = await self._judge(full)
-        session.append(f"doctor(diagnosis): {final[:500]}")
+        diagnosis_session = [diagnose, "---", "FULL CONVERSATION:\n" + "\n".join(doctor_session)]
+        final = await self._judge(diagnosis_session[0] + "\n\n" + diagnosis_session[1] + "\n" + diagnosis_session[2])
+        diagnosis_session.append(f"doctor output: {final[:500]}")
 
         match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', final, re.DOTALL)
         if match:
@@ -208,14 +213,17 @@ class Doctor:
                     healthy=not data.get("symptom_found", True),
                     diagnosis=data.get("diagnosis", ""),
                     evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
-                    conversation=session
+                    doctor_session=doctor_session,
+                    patient_log=patient_log,
+                    diagnosis_session=diagnosis_session
                 )
             except (json.JSONDecodeError, KeyError):
                 pass
 
         return DiagnosisResult(card=card, healthy=False,
                                diagnosis="diagnosis failed",
-                               conversation=session)
+                               doctor_session=doctor_session,
+                               patient_log=patient_log)
 
 
 class DiagnosticEngine:
@@ -265,10 +273,15 @@ class DiagnosticEngine:
             for i, r in enumerate(results)
         ]
         final.evidence.append(f"Aggregate: {healthy_count}/{samples} asymptomatic {ci_str}")
-        final.conversation = []
+        final.doctor_session = []
+        final.patient_log = []
+        final.diagnosis_session = []
         for i, r in enumerate(results):
-            final.conversation.append(f"--- Run {i+1} ({'ASYM' if r.healthy else 'SYM'}) ---")
-            final.conversation.extend(r.conversation or [])
+            final.doctor_session.append(f"--- Run {i+1} ({'ASYM' if r.healthy else 'SYM'}) ---")
+            final.doctor_session.extend(r.doctor_session or [])
+            final.patient_log.extend(r.patient_log or [])
+            final.diagnosis_session.append(f"--- Run {i+1} ({'ASYM' if r.healthy else 'SYM'}) ---")
+            final.diagnosis_session.extend(r.diagnosis_session or [])
 
         return final
 

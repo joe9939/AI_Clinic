@@ -1,9 +1,20 @@
 # AI Clinic - Diagnostic Engine
 
-import json, re, asyncio, os
+import json, re, asyncio, os, math
 from typing import Optional
 
 # 0/1 scoring: 1 = asymptomatic (healthy), 0 = symptomatic (symptom detected)
+
+
+def wilson_ci(n: int, k: int, z: float = 1.96) -> tuple[float, float]:
+    """Wilson score confidence interval for binomial proportion."""
+    if n == 0:
+        return (0.0, 0.0)
+    p = k / n
+    denom = 1 + z**2 / n
+    center = (p + z**2 / (2 * n)) / denom
+    margin = z * math.sqrt((p * (1 - p) / n) + (z**2 / (4 * n**2))) / denom
+    return (max(0.0, center - margin), min(1.0, center + margin))
 
 class DiagnosticTools:
     """Tools the doctor uses. Keeps conversation history for continuous session."""
@@ -221,17 +232,40 @@ class DiagnosticEngine:
             results.append(r)
 
         healthy_count = sum(1 for r in results if r.healthy)
-        majority_healthy = healthy_count > samples / 2
-        confidence = max(healthy_count, samples - healthy_count) / samples
+        rate = healthy_count / samples
+        lo, hi = wilson_ci(samples, healthy_count)
 
-        majority = [r for r in results if r.healthy == majority_healthy]
+        # Decision based on whether CI excludes 50%
+        if lo > 0.5:
+            final_healthy = True
+            certainty = "high"
+        elif hi < 0.5:
+            final_healthy = False
+            certainty = "high"
+        elif rate >= 0.5:
+            final_healthy = True
+            certainty = "low"
+        else:
+            final_healthy = False
+            certainty = "low"
+
+        majority = [r for r in results if r.healthy == (final_healthy if final_healthy is not None else True)]
+        if not majority:
+            majority = results
         final = majority[0]
-        final.healthy = majority_healthy
-        final.diagnosis = f"{final.diagnosis[:100]} | {healthy_count}/{samples} asymptomatic ({int(confidence*100)}% confidence)"
+
+        final.healthy = final_healthy
+        ci_str = f"95%CI [{lo*100:.0f}%,{hi*100:.0f}%]"
+        label = "ASYM" if final_healthy else "SYM"
+        final.diagnosis = f"{label} {healthy_count}/{samples} {ci_str}"
+        if certainty == "low":
+            final.diagnosis += " (low certainty, CI crosses 50%)"
+
         final.evidence = [
             f"Run {i+1}: {'ASYM' if r.healthy else 'SYM'} - {r.diagnosis[:60]}"
             for i, r in enumerate(results)
         ]
+        final.evidence.append(f"Aggregate: {healthy_count}/{samples} asymptomatic {ci_str}")
         final.conversation = []
         for i, r in enumerate(results):
             final.conversation.append(f"--- Run {i+1} ({'ASYM' if r.healthy else 'SYM'}) ---")

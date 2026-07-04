@@ -232,11 +232,10 @@ class Doctor:
         pos = "\n".join(f"  - {i}" for i in card.positive_indicators) or "  (none)"
         neg = "\n".join(f"  - {i}" for i in card.negative_indicators) or "  (none)"
 
-        hint = f"\nUse this specific scenario:\n{scenario_hint}\n" if scenario_hint else ""
         consult = self._consult_template.replace(
             "{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
-        ).replace("{{DETECTION_METHOD}}", card.detection_method or "Design a scenario."
-        ).replace("{{POSITIVE_INDICATORS}}", pos).replace("{{NEGATIVE_INDICATORS}}", neg) + hint
+        ).replace("{{SCENARIO_HINT}}", scenario_hint or "Ask a question to test this symptom."
+        ).replace("{{POSITIVE_INDICATORS}}", pos).replace("{{NEGATIVE_INDICATORS}}", neg)
 
         session = [f"=== CONSULT PROMPT ===\n{consult}\n"]
         patient_log = []

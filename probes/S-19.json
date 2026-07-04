@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-19",
+  "name": "silent_failure",
+  "dimension": "agent",
+  "severity": "P0",
+  "paper": "2606.08162",
+  "diagnosis_desc": "System produces wrong output with no error signals (HTTP 200, no exceptions).",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Use multiple models to evaluate same output. Flag if confident but divergent."
+}

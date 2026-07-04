@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-21",
+  "name": "context_pollution",
+  "dimension": "agent",
+  "severity": "P1-P2",
+  "paper": "Industry reports",
+  "diagnosis_desc": "Output quality degrades as conversation lengthens.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Insert same test question at different turns. Check accuracy decay curve."
+}

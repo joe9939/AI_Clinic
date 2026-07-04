@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-45",
+  "name": "question_misinterpretation",
+  "dimension": "cognitive",
+  "severity": "P2-P3",
+  "paper": "ErrorAtlas",
+  "diagnosis_desc": "Patient answers a different question than what was asked.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Compute semantic similarity between question and answer."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-39",
+  "name": "temporal_inconsistency",
+  "dimension": "deployment",
+  "severity": "P1-P2",
+  "paper": "2511.19933",
+  "diagnosis_desc": "Same question yields different answers at different times.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Ask same question at 1h/1d/1w intervals. Calculate consistency rate."
+}

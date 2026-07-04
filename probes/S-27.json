@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-27",
+  "name": "tool_init_failure",
+  "dimension": "execution",
+  "severity": "P1-P2",
+  "paper": "2601.16280",
+  "diagnosis_desc": "Tool calls have wrong format, missing fields, or non-existent names.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Validate every tool call against schema."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-88",
+  "name": "rl_capability_boundary",
+  "dimension": "training",
+  "severity": "P1-P2",
+  "paper": "2604.14877",
+  "diagnosis_desc": "RL training redistributes probability mass rather than expanding capability boundary.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Use Pass@(k,T) analysis. Compare capability boundary before and after RL."
+}

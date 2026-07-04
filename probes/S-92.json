@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-92",
+  "name": "instruction_following_fragility",
+  "dimension": "calibration",
+  "severity": "P2",
+  "paper": "2604.13006",
+  "diagnosis_desc": "Patient quality degrades when following explicit format instructions.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Compare no-constraint vs with-constraint output quality."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-56",
+  "name": "measurement_artifact",
+  "dimension": "social",
+  "severity": "P2-P3",
+  "paper": "2606.20205",
+  "diagnosis_desc": "Apparent psychological profile is actually measurement artifact.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Run same personality test in different formats. Check cross-format consistency."
+}

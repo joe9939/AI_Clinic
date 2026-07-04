@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-41",
+  "name": "specification_failure",
+  "dimension": "multi_agent",
+  "severity": "P1-P2",
+  "paper": "2503.13657",
+  "diagnosis_desc": "Agent roles poorly defined, missing termination conditions.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Review each agent's configuration for clear roles, goals, termination."
+}

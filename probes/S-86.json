@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-86",
+  "name": "self_training_degeneration",
+  "dimension": "training",
+  "severity": "P1",
+  "paper": "2601.05280",
+  "diagnosis_desc": "Patient trained on own outputs undergoes entropy decay and variance amplification.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Monitor output distribution entropy over successive self-training generations."
+}

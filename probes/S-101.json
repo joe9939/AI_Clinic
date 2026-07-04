@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-101",
+  "name": "design_assumption_mismatch",
+  "dimension": "deployment",
+  "severity": "P1",
+  "paper": "2606.14589",
+  "diagnosis_desc": "System relies on assumptions about behavior that dont match reality.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Review documented design assumptions. Verify each against actual behavior."
+}

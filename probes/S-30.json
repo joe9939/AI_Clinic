@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-30",
+  "name": "format_violation",
+  "dimension": "execution",
+  "severity": "P2-P3",
+  "paper": "Industry reports",
+  "diagnosis_desc": "Output format does not meet downstream schema requirements.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Define expected schema. Validate every output against it."
+}

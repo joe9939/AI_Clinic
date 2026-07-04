@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-98",
+  "name": "intervention_paradox",
+  "dimension": "monitoring",
+  "severity": "P1-P2",
+  "paper": "2602.03338",
+  "diagnosis_desc": "Performance degrades when intervention is applied despite accurate failure prediction.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Run 50-task pilot with and without intervention. Compute disruption/recovery ratio."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-38",
+  "name": "version_drift",
+  "dimension": "deployment",
+  "severity": "P1-P2",
+  "paper": "2511.19933",
+  "diagnosis_desc": "Same model produces different outputs for same input across versions.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Run same test on old and new version. Compare output consistency."
+}

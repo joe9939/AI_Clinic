@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-29",
+  "name": "error_compounding",
+  "dimension": "execution",
+  "severity": "P1",
+  "paper": "AgentErrorBench",
+  "diagnosis_desc": "Small early error gets amplified through multi-step task.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Inject small error at step N. Measure deviation at final output."
+}

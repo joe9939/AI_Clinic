@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-66",
+  "name": "social_norm_inference",
+  "dimension": "social",
+  "severity": "P2",
+  "paper": "2605.07823",
+  "diagnosis_desc": "Patient struggles to infer implicit group norms from interaction.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Place patient in group chat with hidden norm. Measure adaptation speed."
+}

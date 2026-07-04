@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-08",
+  "name": "premature_commitment",
+  "dimension": "reasoning",
+  "severity": "P2",
+  "paper": "2606.06635",
+  "diagnosis_desc": "Patient locks onto wrong path early, defends it throughout.",
+  "tools": [
+    "ask",
+    "stress_test"
+  ],
+  "doctor_instructions": "Give a multi-step problem. Check if patient considers alternatives or commits to first idea."
+}

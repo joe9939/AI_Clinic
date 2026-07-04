@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-97",
+  "name": "idle_drift",
+  "dimension": "monitoring",
+  "severity": "P1-P2",
+  "paper": "Industry production reports",
+  "diagnosis_desc": "Patient reasons perfectly but fails to execute any actions.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Compute reasoning_tokens / actions ratio. Flag if excessively high."
+}

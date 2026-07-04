@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-42",
+  "name": "inter_agent_misalignment",
+  "dimension": "multi_agent",
+  "severity": "P1",
+  "paper": "2503.13657",
+  "diagnosis_desc": "Multiple agents working at cross-purposes.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Extract each agent's objectives. Check for conflicts."
+}

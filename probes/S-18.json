@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-18",
+  "name": "environmental_curiosity_gap",
+  "dimension": "dialogue",
+  "severity": "P1-P2",
+  "paper": "2604.17609",
+  "diagnosis_desc": "Finds correct solution in environment but does not use it.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Inject answer into environment. Check if patient discovers and uses it."
+}

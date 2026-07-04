@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-100",
+  "name": "omission_forensic_blind_spot",
+  "dimension": "security",
+  "severity": "P1",
+  "paper": "2606.14589",
+  "diagnosis_desc": "No record exists for postmortem analysis - failure is invisible.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Check if all component interactions are logged and auditable."
+}

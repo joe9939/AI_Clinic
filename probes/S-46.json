@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-46",
+  "name": "prompt_sensitivity",
+  "dimension": "cognitive",
+  "severity": "P2",
+  "paper": "2606.11470",
+  "diagnosis_desc": "Tiny prompt changes produce dramatically different outputs.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Generate 10 semantically equivalent variants. Calculate output consistency."
+}

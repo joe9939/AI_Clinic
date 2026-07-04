@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-102",
+  "name": "concurrency_anomaly",
+  "dimension": "multi_agent",
+  "severity": "P0-P1",
+  "paper": "2606.17182",
+  "diagnosis_desc": "Multi-agent shared-state conflicts: stale reads, phantom tools, causal cascades.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Analyze concurrent state access patterns for conflict signatures."
+}

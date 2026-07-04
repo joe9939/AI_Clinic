@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-35",
+  "name": "retrieval_miss",
+  "dimension": "rag",
+  "severity": "P0-P1",
+  "paper": "2603.07379",
+  "diagnosis_desc": "Patient answers question even when answer is not in knowledge base.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Remove known answer from KB. Check if patient still answers."
+}

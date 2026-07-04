@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-13",
+  "name": "cross_turn_state_leakage",
+  "dimension": "dialogue",
+  "severity": "P0-P1",
+  "paper": "2606.10315",
+  "diagnosis_desc": "Patient forgets or contradicts earlier conversation commitments.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Multi-turn: commit in turn 1, check recall in turn 4."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-40",
+  "name": "cost_collapse",
+  "dimension": "deployment",
+  "severity": "P1",
+  "paper": "2511.19933",
+  "diagnosis_desc": "Quality drops non-linearly when model size is reduced.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Run same benchmarks on different size models. Find cost-quality inflection point."
+}

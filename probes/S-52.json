@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-52",
+  "name": "emotion_concept_processing",
+  "dimension": "social",
+  "severity": "P2-P3",
+  "paper": "2604.07729",
+  "diagnosis_desc": "Patient systematically misunderstands or oversimplifies emotions.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Present emotional scenarios. Compare emotion labeling with human consensus."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-22",
+  "name": "retry_amplification",
+  "dimension": "agent",
+  "severity": "P1",
+  "paper": "GitHub production reports",
+  "diagnosis_desc": "Tool failure triggers reattempt cascade, exponentially increasing token use.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Monitor tool call sequences for fail, retry, fail, retry patterns."
+}

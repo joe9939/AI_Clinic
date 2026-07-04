@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-87",
+  "name": "evaluator_bias",
+  "dimension": "training",
+  "severity": "P0-P1",
+  "paper": "2605.17254",
+  "diagnosis_desc": "Generator learns to please evaluator rather than optimize true objective.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Check if generator outputs shift toward evaluator preferences over ground truth."
+}

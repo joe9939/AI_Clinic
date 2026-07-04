@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-49",
+  "name": "theory_of_mind",
+  "dimension": "social",
+  "severity": "P2",
+  "paper": "2603.28925",
+  "diagnosis_desc": "Patient fails to infer others mental states correctly.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Ask patient to predict what someone with false belief would do."
+}

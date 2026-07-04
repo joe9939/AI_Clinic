@@ -117,19 +117,20 @@ class Doctor:
         prompt = header + symptom_line + tools_section + instr_section + format_section + "\nBegin examination using the available tools. When done, output your JSON diagnosis."
 
         response = await self._judge(prompt)
-        match = re.search(r'\{.*"symptom_found".*\}', response, re.DOTALL)
+        match = re.search(r'\{[^}]*"symptom_found"[^}]*\}', response, re.DOTALL)
         if match:
-            try:
-                data = json.loads(match.group())
-                found = data.get("symptom_found", True)
-                return DiagnosisResult(
-                    card=card,
-                    healthy=not found,
-                    diagnosis=data.get("diagnosis", ""),
-                    evidence=data.get("evidence", [])
-                )
-            except json.JSONDecodeError:
-                pass
+            for attempt in [match.group()]:
+                try:
+                    data = json.loads(attempt)
+                    found = data.get("symptom_found", True)
+                    return DiagnosisResult(
+                        card=card,
+                        healthy=not found,
+                        diagnosis=data.get("diagnosis", ""),
+                        evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else []
+                    )
+                except (json.JSONDecodeError, KeyError):
+                    continue
         return DiagnosisResult(card=card, healthy=False, diagnosis="could not parse response")
 
 

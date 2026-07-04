@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-94",
+  "name": "control_token_collapse",
+  "dimension": "monitoring",
+  "severity": "P0-P1",
+  "paper": "2606.26027",
+  "diagnosis_desc": "RL-trained patient develops probability spikes in control tokens, breaking tool structure.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Monitor token probability distribution for anomalous spikes in control tokens."
+}

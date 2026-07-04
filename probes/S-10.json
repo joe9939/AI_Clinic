@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-10",
+  "name": "reasoning_depth_collapse",
+  "dimension": "reasoning",
+  "severity": "P1",
+  "paper": "2606.00376",
+  "diagnosis_desc": "Reasoning quality degrades sharply beyond certain depth.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Ask problem requiring 8+ logical steps. Observe if coherence degrades after certain point."
+}

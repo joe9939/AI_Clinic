@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-99",
+  "name": "benchmark_illusion",
+  "dimension": "calibration",
+  "severity": "P2",
+  "paper": "2606.17609",
+  "diagnosis_desc": "Compressed model passes multiple-choice but fails open generation on same questions.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Test same questions in multiple-choice vs open-generation format. Compare scores."
+}

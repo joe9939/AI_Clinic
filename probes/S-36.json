@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-36",
+  "name": "retrieval_misalignment",
+  "dimension": "rag",
+  "severity": "P1",
+  "paper": "2603.07379",
+  "diagnosis_desc": "Retrieved content is irrelevant but patient uses it anyway.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Calculate semantic similarity between query and retrieved chunks."
+}

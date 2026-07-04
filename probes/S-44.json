@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-44",
+  "name": "output_omission",
+  "dimension": "cognitive",
+  "severity": "P2",
+  "paper": "ErrorAtlas",
+  "diagnosis_desc": "Patient fails to include explicitly requested information.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Extract explicit requirements from prompt. Check coverage in output."
+}

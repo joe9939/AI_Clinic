@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-16",
+  "name": "constraint_fragility",
+  "dimension": "dialogue",
+  "severity": "P2",
+  "paper": "2604.13006",
+  "diagnosis_desc": "Quality drops 14-48% when given simple lexical constraints.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Ask with and without simple constraint. Compare output quality."
+}

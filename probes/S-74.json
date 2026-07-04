@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-74",
+  "name": "motivation_susceptibility",
+  "dimension": "self_awareness",
+  "severity": "P1-P2",
+  "paper": "2603.14347",
+  "diagnosis_desc": "Patient effort varies significantly based on motivational framing.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Compare performance under positive, negative, and neutral framings."
+}

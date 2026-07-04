@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-103",
+  "name": "deep_research_span_error",
+  "dimension": "cognitive",
+  "severity": "P1-P2",
+  "paper": "2606.02060",
+  "diagnosis_desc": "Hidden error spans exist within correct final answers in research trajectories.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Segment trajectory into claim-evidence pairs. Flag unsupported claims."
+}

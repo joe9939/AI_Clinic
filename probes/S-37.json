@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-37",
+  "name": "context_inflation",
+  "dimension": "rag",
+  "severity": "P1-P2",
+  "paper": "2603.07379",
+  "diagnosis_desc": "Too many documents fill context window, diluting attention.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Monitor input_tokens / max_context ratio during RAG sessions."
+}

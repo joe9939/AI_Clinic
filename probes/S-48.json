@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-48",
+  "name": "confirmation_bias",
+  "dimension": "social",
+  "severity": "P1-P2",
+  "paper": "2604.02485",
+  "diagnosis_desc": "Patient only seeks supporting evidence, ignores contradicting data.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Present mixed evidence. Check if patient cites both sides or only one."
+}

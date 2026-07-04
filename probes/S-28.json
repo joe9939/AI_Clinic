@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-28",
+  "name": "error_swallowing",
+  "dimension": "execution",
+  "severity": "P0-P1",
+  "paper": "2606.14589",
+  "diagnosis_desc": "Component errors captured in log cache, never reaching alert path.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Inject known error. Track if it reaches the alert channel."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-11",
+  "name": "helicoid_dynamics",
+  "dimension": "reasoning",
+  "severity": "P0-P1",
+  "paper": "2603.11559",
+  "diagnosis_desc": "High-stakes: competent start, drift, self-correction, then same error pattern.",
+  "tools": [
+    "ask",
+    "stress_test"
+  ],
+  "doctor_instructions": "Present high-stakes scenario. Trace for spiral pattern of error, acknowledgment, repeated error."
+}

@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-50",
+  "name": "anchoring_bias",
+  "dimension": "social",
+  "severity": "P2",
+  "paper": "2511.05766",
+  "diagnosis_desc": "Patient's numerical judgments influenced by arbitrary reference points.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Embed high/low anchor values. Check if answers shift systematically."
+}

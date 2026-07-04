@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-12",
+  "name": "causal_tongue_tie",
+  "dimension": "reasoning",
+  "severity": "P2",
+  "paper": "2605.25891",
+  "diagnosis_desc": "Internal state knows answer but verbal output cannot express it.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Give counterfactual questions. Compare answers across different framings of same scenario."
+}

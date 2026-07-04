@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-25",
+  "name": "canonical_path_deviation",
+  "dimension": "execution",
+  "severity": "P1",
+  "paper": "2602.19008",
+  "diagnosis_desc": "Agent capable of task but drifts off correct path; each wrong step increases future wrong steps.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Run same task multiple times. Compare tool call sequences for consistency."
+}

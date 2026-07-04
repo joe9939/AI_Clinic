@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-89",
+  "name": "tail_miscalibration",
+  "dimension": "calibration",
+  "severity": "P1",
+  "paper": "2605.22672",
+  "diagnosis_desc": "Patient systematically mispredicts extreme events despite good average calibration.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Collect probability predictions across distribution. Check calibration at 90th, 95th, 99th percentiles."
+}

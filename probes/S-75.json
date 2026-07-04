@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-75",
+  "name": "personality_robustness",
+  "dimension": "self_awareness",
+  "severity": "P1-P2",
+  "paper": "2603.19030",
+  "diagnosis_desc": "Patient personality inconsistent across contexts and formats.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Test same personality traits in different contexts. Measure consistency."
+}

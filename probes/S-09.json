@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-09",
+  "name": "persistent_uncertainty",
+  "dimension": "reasoning",
+  "severity": "P2",
+  "paper": "2606.06635",
+  "diagnosis_desc": "High uncertainty throughout without converging on answer.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Check if patient oscillates between answers without reaching definite conclusion."
+}

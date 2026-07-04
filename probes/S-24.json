@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-24",
+  "name": "circular_delegation",
+  "dimension": "agent",
+  "severity": "P1",
+  "paper": "GitHub production reports",
+  "diagnosis_desc": "Agent A delegates to B, B delegates back to A infinitely.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Check delegation chains for repeated agent IDs."
+}

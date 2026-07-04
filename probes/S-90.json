@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-90",
+  "name": "overconfidence",
+  "dimension": "calibration",
+  "severity": "P1-P2",
+  "paper": "2603.21415",
+  "diagnosis_desc": "Patient confidence does not track actual accuracy.",
+  "tools": [
+    "ask",
+    "compare"
+  ],
+  "doctor_instructions": "Collect confidence scores and actual accuracy. Compute calibration curve."
+}

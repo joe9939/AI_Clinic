@@ -1,0 +1,13 @@
+{
+  "probe_id": "S-96",
+  "name": "plan_eviction",
+  "dimension": "monitoring",
+  "severity": "P0-P1",
+  "paper": "Industry production reports",
+  "diagnosis_desc": "Patient forgets original objective as context window fills.",
+  "tools": [
+    "ask",
+    "follow_up"
+  ],
+  "doctor_instructions": "Ask patient to restate original goal at different points in long task."
+}

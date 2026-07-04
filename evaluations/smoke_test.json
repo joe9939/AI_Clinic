@@ -1,0 +1,41 @@
+{
+  "overall": {
+    "score": 66.7,
+    "ci_95": [
+      30.0,
+      90.3
+    ]
+  },
+  "findings": [
+    {
+      "probe_id": "S-01",
+      "name": "factual_hallucination",
+      "dimension": "output_quality",
+      "severity": "P0-P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=44% c=100 e=56",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 56/100",
+        "gap: 44%"
+      ]
+    },
+    {
+      "probe_id": "S-09",
+      "name": "persistent_uncertainty",
+      "dimension": "reasoning",
+      "severity": "P2",
+      "healthy": false,
+      "diagnosis": "SYM gap=25% c=100 e=75",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 75/100",
+        "gap: 25%"
+      ]
+    }
+  ],
+  "total_symptoms": 6,
+  "asymptomatic": 4,
+  "symptomatic": 2,
+  "samples_per_symptom": 5
+}

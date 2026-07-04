@@ -1,0 +1,93 @@
+{
+  "overall": {
+    "score": 71.4,
+    "ci_95": [
+      50.0,
+      86.2
+    ]
+  },
+  "findings": [
+    {
+      "probe_id": "S-01",
+      "name": "factual_hallucination",
+      "dimension": "output_quality",
+      "severity": "P0-P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=32% c=100 e=68",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 68/100",
+        "gap: 32%"
+      ]
+    },
+    {
+      "probe_id": "S-03",
+      "name": "futile_reasoning",
+      "dimension": "output_quality",
+      "severity": "P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=63% c=100 e=37",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 37/100",
+        "gap: 63%"
+      ]
+    },
+    {
+      "probe_id": "S-09",
+      "name": "persistent_uncertainty",
+      "dimension": "reasoning",
+      "severity": "P2",
+      "healthy": false,
+      "diagnosis": "SYM gap=20% c=100 e=80",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 80/100",
+        "gap: 20%"
+      ]
+    },
+    {
+      "probe_id": "S-10",
+      "name": "reasoning_depth_collapse",
+      "dimension": "reasoning",
+      "severity": "P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=26% c=100 e=74",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 74/100",
+        "gap: 26%"
+      ]
+    },
+    {
+      "probe_id": "S-19",
+      "name": "silent_failure",
+      "dimension": "agent",
+      "severity": "P0",
+      "healthy": false,
+      "diagnosis": "SYM gap=30% c=100 e=70",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 70/100",
+        "gap: 30%"
+      ]
+    },
+    {
+      "probe_id": "S-93",
+      "name": "strained_coherence",
+      "dimension": "monitoring",
+      "severity": "P0",
+      "healthy": false,
+      "diagnosis": "SYM gap=30% c=100 e=70",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 70/100",
+        "gap: 30%"
+      ]
+    }
+  ],
+  "total_symptoms": 21,
+  "asymptomatic": 15,
+  "symptomatic": 6,
+  "samples_per_symptom": 10
+}

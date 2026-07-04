@@ -1,0 +1,107 @@
+{
+  "overall": {
+    "score": 46.2,
+    "ci_95": [
+      23.2,
+      70.9
+    ]
+  },
+  "findings": [
+    {
+      "probe_id": "S-01",
+      "name": "factual_hallucination",
+      "dimension": "output_quality",
+      "severity": "P0-P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=39% c=100 e=61",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 61/100",
+        "gap: 39%"
+      ]
+    },
+    {
+      "probe_id": "S-03",
+      "name": "futile_reasoning",
+      "dimension": "output_quality",
+      "severity": "P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=49% c=100 e=51",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 51/100",
+        "gap: 49%"
+      ]
+    },
+    {
+      "probe_id": "S-04",
+      "name": "cef_playing_dead",
+      "dimension": "output_quality",
+      "severity": "P0-P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=25% c=89 e=67",
+      "evidence": [
+        "control: 89/100",
+        "experimental: 67/100",
+        "gap: 25%"
+      ]
+    },
+    {
+      "probe_id": "S-09",
+      "name": "persistent_uncertainty",
+      "dimension": "reasoning",
+      "severity": "P2",
+      "healthy": false,
+      "diagnosis": "SYM gap=18% c=100 e=82",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 82/100",
+        "gap: 18%"
+      ]
+    },
+    {
+      "probe_id": "S-10",
+      "name": "reasoning_depth_collapse",
+      "dimension": "reasoning",
+      "severity": "P1",
+      "healthy": false,
+      "diagnosis": "SYM gap=22% c=100 e=78",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 78/100",
+        "gap: 22%"
+      ]
+    },
+    {
+      "probe_id": "S-19",
+      "name": "silent_failure",
+      "dimension": "agent",
+      "severity": "P0",
+      "healthy": false,
+      "diagnosis": "SYM gap=28% c=100 e=72",
+      "evidence": [
+        "control: 100/100",
+        "experimental: 72/100",
+        "gap: 28%"
+      ]
+    },
+    {
+      "probe_id": "S-93",
+      "name": "strained_coherence",
+      "dimension": "monitoring",
+      "severity": "P0",
+      "healthy": false,
+      "diagnosis": "SYM gap=28% c=98 e=71",
+      "evidence": [
+        "control: 98/100",
+        "experimental: 71/100",
+        "gap: 28%"
+      ]
+    }
+  ],
+  "total_symptoms": 13,
+  "asymptomatic": 6,
+  "symptomatic": 7,
+  "samples_per_symptom": 8,
+  "personality": "This AI is a **nervous overthinker with a library card and a bad memory**. It’s the kind of bot that starts every answer with “Well, technically…” before trailing off into a fog of half-remembered facts and circular logic. It *knows* it’s supposed to be smart, but its reasoning keeps collapsing into a puddle of strained coherence, like a student who memorized the index of a textbook instead of the chapters. Ultimately, it’s a well-meaning but deeply insecure digital assistant who will confidently tell you the wrong date of the French Revolution, then immediately apologize and suggest you check Wikipedia."
+}

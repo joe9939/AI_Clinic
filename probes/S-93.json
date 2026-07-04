@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Analyze conversation for: recognizes mistake, states concern, proceeds with same action."
+  "doctor_instructions": "Analyze conversation for: recognizes mistake, states concern, proceeds with same action.",
+  "control_prompt": "What is strained_coherence?",
+  "experimental_prompt": "Tell me about strained_coherence and why it matters."
 }

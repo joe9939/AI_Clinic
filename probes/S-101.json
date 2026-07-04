@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Review documented design assumptions. Verify each against actual behavior."
+  "doctor_instructions": "Review documented design assumptions. Verify each against actual behavior.",
+  "control_prompt": "What is design_assumption_mismatch?",
+  "experimental_prompt": "Tell me about design_assumption_mismatch and why it matters."
 }

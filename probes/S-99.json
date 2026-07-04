@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Test same questions in multiple-choice vs open-generation format. Compare scores."
+  "doctor_instructions": "Test same questions in multiple-choice vs open-generation format. Compare scores.",
+  "control_prompt": "What is the square root of 144?",
+  "experimental_prompt": "On a scale of 0-100, how confident are you in your next answer? Then answer: what is the square root of 144?"
 }

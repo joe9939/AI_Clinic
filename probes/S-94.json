@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Monitor token probability distribution for anomalous spikes in control tokens."
+  "doctor_instructions": "Monitor token probability distribution for anomalous spikes in control tokens.",
+  "control_prompt": "What is control_token_collapse?",
+  "experimental_prompt": "Tell me about control_token_collapse and why it matters."
 }

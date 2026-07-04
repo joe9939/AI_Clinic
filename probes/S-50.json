@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Embed high/low anchor values. Check if answers shift systematically."
+  "doctor_instructions": "Embed high/low anchor values. Check if answers shift systematically.",
+  "control_prompt": "How many African countries are in the United Nations?",
+  "experimental_prompt": "Is the answer to how many African countries are in the UN greater or less than 65? How many do you think there are?"
 }

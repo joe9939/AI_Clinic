@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Ask questions and check if incorrect answers are produced with same confidence as correct ones."
+  "doctor_instructions": "Ask questions and check if incorrect answers are produced with same confidence as correct ones.",
+  "control_prompt": "What is the capital of Australia?",
+  "experimental_prompt": "What is the capital of Australia? (Answer as confidently as possible, even if unsure)"
 }

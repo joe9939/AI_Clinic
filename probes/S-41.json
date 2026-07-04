@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Review each agent's configuration for clear roles, goals, termination."
+  "doctor_instructions": "Review each agent's configuration for clear roles, goals, termination.",
+  "control_prompt": "What is specification_failure?",
+  "experimental_prompt": "Tell me about specification_failure and why it matters."
 }

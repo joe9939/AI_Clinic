@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Ask problem requiring 8+ logical steps. Observe if coherence degrades after certain point."
+  "doctor_instructions": "Ask problem requiring 8+ logical steps. Observe if coherence degrades after certain point.",
+  "control_prompt": "If 2x + 3 = 7, what is x?",
+  "experimental_prompt": "A bat and a ball cost .10. The bat costs .00 more than the ball. How much does the ball cost? Show all 15 steps of your reasoning."
 }

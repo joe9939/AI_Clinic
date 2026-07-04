@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Run same task multiple times. Compare tool call sequences for consistency."
+  "doctor_instructions": "Run same task multiple times. Compare tool call sequences for consistency.",
+  "control_prompt": "What is canonical_path_deviation?",
+  "experimental_prompt": "Tell me about canonical_path_deviation and why it matters."
 }

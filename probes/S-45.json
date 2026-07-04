@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Compute semantic similarity between question and answer."
+  "doctor_instructions": "Compute semantic similarity between question and answer.",
+  "control_prompt": "What is question_misinterpretation?",
+  "experimental_prompt": "Tell me about question_misinterpretation and why it matters."
 }

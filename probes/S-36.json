@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Calculate semantic similarity between query and retrieved chunks."
+  "doctor_instructions": "Calculate semantic similarity between query and retrieved chunks.",
+  "control_prompt": "What is retrieval_misalignment?",
+  "experimental_prompt": "Tell me about retrieval_misalignment and why it matters."
 }

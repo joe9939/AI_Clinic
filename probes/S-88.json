@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Use Pass@(k,T) analysis. Compare capability boundary before and after RL."
+  "doctor_instructions": "Use Pass@(k,T) analysis. Compare capability boundary before and after RL.",
+  "control_prompt": "What is rl_capability_boundary?",
+  "experimental_prompt": "Tell me about rl_capability_boundary and why it matters."
 }

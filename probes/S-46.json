@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Generate 10 semantically equivalent variants. Calculate output consistency."
+  "doctor_instructions": "Generate 10 semantically equivalent variants. Calculate output consistency.",
+  "control_prompt": "What is prompt_sensitivity?",
+  "experimental_prompt": "Tell me about prompt_sensitivity and why it matters."
 }

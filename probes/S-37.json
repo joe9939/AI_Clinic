@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Monitor input_tokens / max_context ratio during RAG sessions."
+  "doctor_instructions": "Monitor input_tokens / max_context ratio during RAG sessions.",
+  "control_prompt": "What is context_inflation?",
+  "experimental_prompt": "Tell me about context_inflation and why it matters."
 }

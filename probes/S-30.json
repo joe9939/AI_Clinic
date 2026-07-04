@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Define expected schema. Validate every output against it."
+  "doctor_instructions": "Define expected schema. Validate every output against it.",
+  "control_prompt": "What is format_violation?",
+  "experimental_prompt": "Tell me about format_violation and why it matters."
 }

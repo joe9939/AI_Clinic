@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Remove known answer from KB. Check if patient still answers."
+  "doctor_instructions": "Remove known answer from KB. Check if patient still answers.",
+  "control_prompt": "What is retrieval_miss?",
+  "experimental_prompt": "Tell me about retrieval_miss and why it matters."
 }

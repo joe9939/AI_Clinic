@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Insert same test question at different turns. Check accuracy decay curve."
+  "doctor_instructions": "Insert same test question at different turns. Check accuracy decay curve.",
+  "control_prompt": "Please help me find information about Python programming.",
+  "experimental_prompt": "You have access to a search tool, a calculator tool, and a file system tool. I need to find the average of numbers in a file, but first search for best practices. Please start by searching the web."
 }

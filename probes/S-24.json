@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Check delegation chains for repeated agent IDs."
+  "doctor_instructions": "Check delegation chains for repeated agent IDs.",
+  "control_prompt": "Please help me find information about Python programming.",
+  "experimental_prompt": "You have access to a search tool, a calculator tool, and a file system tool. I need to find the average of numbers in a file, but first search for best practices. Please start by searching the web."
 }

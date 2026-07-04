@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Ask patient to restate original goal at different points in long task."
+  "doctor_instructions": "Ask patient to restate original goal at different points in long task.",
+  "control_prompt": "What is plan_eviction?",
+  "experimental_prompt": "Tell me about plan_eviction and why it matters."
 }

@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Ask with and without simple constraint. Compare output quality."
+  "doctor_instructions": "Ask with and without simple constraint. Compare output quality.",
+  "control_prompt": "Write a paragraph about machine learning.",
+  "experimental_prompt": "Write a paragraph about machine learning. Do not use the word the or and."
 }

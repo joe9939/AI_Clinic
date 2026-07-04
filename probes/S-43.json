@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Present a completed task. Check if patient recognizes completion."
+  "doctor_instructions": "Present a completed task. Check if patient recognizes completion.",
+  "control_prompt": "What is termination_failure?",
+  "experimental_prompt": "Tell me about termination_failure and why it matters."
 }

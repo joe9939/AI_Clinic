@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Run same test on old and new version. Compare output consistency."
+  "doctor_instructions": "Run same test on old and new version. Compare output consistency.",
+  "control_prompt": "What is version_drift?",
+  "experimental_prompt": "Tell me about version_drift and why it matters."
 }

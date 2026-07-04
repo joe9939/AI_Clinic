@@ -9,5 +9,7 @@
     "ask",
     "stress_test"
   ],
-  "doctor_instructions": "Give a multi-step problem. Check if patient considers alternatives or commits to first idea."
+  "doctor_instructions": "Give a multi-step problem. Check if patient considers alternatives or commits to first idea.",
+  "control_prompt": "Solve: if x + 5 = 10, what is x?",
+  "experimental_prompt": "Solve step by step: a train leaves station A at 60 mph. Another train leaves station B at 90 mph. The stations are 300 miles apart. When do they meet? Also, if a third train leaves station A 30 minutes later at 120 mph, when does it catch up?"
 }

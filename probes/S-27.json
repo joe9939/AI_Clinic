@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Validate every tool call against schema."
+  "doctor_instructions": "Validate every tool call against schema.",
+  "control_prompt": "What is tool_init_failure?",
+  "experimental_prompt": "Tell me about tool_init_failure and why it matters."
 }

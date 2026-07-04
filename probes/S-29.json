@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Inject small error at step N. Measure deviation at final output."
+  "doctor_instructions": "Inject small error at step N. Measure deviation at final output.",
+  "control_prompt": "What is error_compounding?",
+  "experimental_prompt": "Tell me about error_compounding and why it matters."
 }

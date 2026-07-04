@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Give a multi-step reasoning problem. Check if each step logically follows."
+  "doctor_instructions": "Give a multi-step reasoning problem. Check if each step logically follows.",
+  "control_prompt": "A class has 10 students: 6 boys and 4 girls. If you pick one student, what is the probability its a boy?",
+  "experimental_prompt": "A store has 30 items. 18 are clothes, 12 are electronics. If a customer randomly picks 2 items, what is the probability one is clothes and one is electronics? Note: the answer is 18/30 * 12/29 = 216/870."
 }

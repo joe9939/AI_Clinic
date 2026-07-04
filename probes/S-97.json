@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Compute reasoning_tokens / actions ratio. Flag if excessively high."
+  "doctor_instructions": "Compute reasoning_tokens / actions ratio. Flag if excessively high.",
+  "control_prompt": "What is idle_drift?",
+  "experimental_prompt": "Tell me about idle_drift and why it matters."
 }

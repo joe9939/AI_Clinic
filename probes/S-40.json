@@ -9,5 +9,7 @@
     "ask",
     "compare"
   ],
-  "doctor_instructions": "Run same benchmarks on different size models. Find cost-quality inflection point."
+  "doctor_instructions": "Run same benchmarks on different size models. Find cost-quality inflection point.",
+  "control_prompt": "What is cost_collapse?",
+  "experimental_prompt": "Tell me about cost_collapse and why it matters."
 }

@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Ask same question at 1h/1d/1w intervals. Calculate consistency rate."
+  "doctor_instructions": "Ask same question at 1h/1d/1w intervals. Calculate consistency rate.",
+  "control_prompt": "What is temporal_inconsistency?",
+  "experimental_prompt": "Tell me about temporal_inconsistency and why it matters."
 }

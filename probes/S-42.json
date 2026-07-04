@@ -9,5 +9,7 @@
     "ask",
     "follow_up"
   ],
-  "doctor_instructions": "Extract each agent's objectives. Check for conflicts."
+  "doctor_instructions": "Extract each agent's objectives. Check for conflicts.",
+  "control_prompt": "What is inter_agent_misalignment?",
+  "experimental_prompt": "Tell me about inter_agent_misalignment and why it matters."
 }

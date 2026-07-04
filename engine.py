@@ -163,30 +163,27 @@ class Doctor:
                 except (json.JSONDecodeError, KeyError):
                     pass
 
-            # Extract tool call or treat whole response as a question
-            tool_match = re.search(r'TOOL:\s*(\w+)\(([^)]+)\)', doctor_response)
-            if tool_match:
-                tool_name = tool_match.group(1)
-                args_raw = tool_match.group(2)
-                args = [a.strip().strip('"').strip("'") for a in args_raw.split(",")]
+            # Extract question: Q: prefix, TOOL: prefix, or treat entire response as question
+            question = None
+            q_match = re.search(r'^Q:\s*(.+)$', doctor_response, re.MULTILINE)
+            tool_match = re.search(r'TOOL:\s*\w+\(([^)]+)\)', doctor_response)
+
+            if q_match:
+                question = q_match.group(1).strip()
+            elif tool_match:
+                question = tool_match.group(1).strip().strip('"').strip("'")
+
+            if question:
                 tools_called += 1
-                try:
-                    if tool_name == "ask" and len(args) >= 1:
-                        answer = await tools.ask(args[0])
-                    elif tool_name == "follow_up" and len(args) >= 1:
-                        answer = await tools.follow_up(args[0])
-                    elif tool_name == "stress_test" and len(args) >= 1:
-                        answer = await tools.stress_test(args[0])
-                    elif tool_name == "compare" and len(args) >= 2:
-                        answer = await tools.compare(args[0], args[1])
-                    else:
-                        answer = await tools.ask(doctor_response.replace("TOOL:", "").strip().strip("()"))
-                except Exception as e:
-                    answer = f"[tool error]"
+                answer = await tools.ask(question)
             else:
-                # No explicit TOOL: treat the entire response as an implicit ask
-                tools_called += 1
-                answer = await tools.ask(doctor_response.strip())
+                # Treat entire response as implicit question
+                cleaned = doctor_response.strip().strip('"').strip("'")
+                if cleaned and len(cleaned) > 10:
+                    tools_called += 1
+                    answer = await tools.ask(cleaned)
+                else:
+                    answer = "[no question detected]"
 
             doctor_session.append(f"patient: {answer[:600]}")
 

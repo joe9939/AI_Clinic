@@ -202,15 +202,33 @@ class Doctor:
                 return ""
         self._consult_template = read("doctor_consult.md") or "Ask 3 questions to check for: {{SYMPTOM_DESCRIPTION}}"
         self._diagnose_template = read("doctor_diagnose.md") or '{"symptom_found": true/false}'
+        self._batch_plan_template = ('Generate {n} different test scenarios for this symptom.\n'
+            'Output each scenario as: SCENARIO N: [description]\n'
+            'Q N: [question to ask]\n'
+            'Make each scenario test different aspects of the symptom.')
 
-    async def diagnose(self, card: SymptomCard, tools: DiagnosticTools) -> DiagnosisResult:
+    async def batch_generate_scenarios(self, card: SymptomCard, n: int = 20) -> list[str]:
+        """Generate N scenarios at once."""
+        prompt = self._batch_plan_template.replace("{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
+        ).replace("{{n}}", str(n)).replace("{{DETECTION_METHOD}}", card.detection_method or "")
+        if card.positive_indicators:
+            prompt += "\nPositive indicators:\n" + "\n".join(f"  - {i}" for i in card.positive_indicators)
+        if card.negative_indicators:
+            prompt += "\nNegative indicators:\n" + "\n".join(f"  - {i}" for i in card.negative_indicators)
+        resp = await self._judge(prompt)
+        scenarios = re.findall(r'SCENARIO\s*\d+:(.*?)(?=SCENARIO|\Z)', resp, re.DOTALL)
+        return [s.strip() for s in scenarios if s.strip()] or [resp[:500]]
+
+    async def diagnose(self, card: SymptomCard, tools: DiagnosticTools,
+                       scenario_hint: str = "") -> DiagnosisResult:
         pos = "\n".join(f"  - {i}" for i in card.positive_indicators) or "  (none)"
         neg = "\n".join(f"  - {i}" for i in card.negative_indicators) or "  (none)"
 
+        hint = f"\nUse this specific scenario:\n{scenario_hint}\n" if scenario_hint else ""
         consult = self._consult_template.replace(
             "{{SYMPTOM_DESCRIPTION}}", card.diagnosis_desc
         ).replace("{{DETECTION_METHOD}}", card.detection_method or "Design a scenario."
-        ).replace("{{POSITIVE_INDICATORS}}", pos).replace("{{NEGATIVE_INDICATORS}}", neg)
+        ).replace("{{POSITIVE_INDICATORS}}", pos).replace("{{NEGATIVE_INDICATORS}}", neg) + hint
 
         session = [f"=== CONSULT PROMPT ===\n{consult}\n"]
         patient_log = []
@@ -221,32 +239,15 @@ class Doctor:
             out = await self._judge(inp)
             session.append(f"doctor: {out}")
 
-            # Review PLAN
-            if "PLAN" in out and turn == 0:
-                plan_text = out[:600]
-                review = await reviewer.review_scenario(card, plan_text)
-                session.append(f"scene_review: {json.dumps(review)}")
-                if review.get("verdict") == "REJECT":
-                    session.append("system: Redesign scenario.")
-                    continue
-
             # Check DIAGNOSIS JSON
             dj = re.search(r'(?:DIAGNOSIS)?\s*(\{.*"symptom_found".*\})', out, re.DOTALL)
             if dj:
                 try:
                     data = json.loads(dj.group(1))
-                    diag_text = data.get("diagnosis", "")
-                    # Review the diagnosis
-                    diag_review = await reviewer.review_diagnosis(card, patient_log, diag_text)
+                    diag_review = await reviewer.review_diagnosis(card, patient_log, data.get("diagnosis", ""))
                     session.append(f"diag_review: {json.dumps(diag_review)}")
-
-                    # If disputed, let doctor reconsider
-                    if diag_review.get("verdict") == "DISPUTE":
-                        session.append("system: Diagnosis disputed. Output revised DIAGNOSIS or confirm.")
-                        continue
-
                     return DiagnosisResult(card=card, healthy=not data.get("symptom_found", True),
-                        diagnosis=diag_text,
+                        diagnosis=data.get("diagnosis", ""),
                         evidence=data.get("evidence", []) if isinstance(data.get("evidence"), list) else [],
                         doctor_session=session, patient_log=patient_log)
                 except (json.JSONDecodeError, KeyError):
@@ -272,16 +273,19 @@ class DiagnosticEngine:
         self._doctor = Doctor(judge_chat)
 
     async def run_symptom(self, card: SymptomCard, samples: int = 20) -> dict:
-        """Run N valid diagnoses. Retry if scenario rejected."""
-        results = []
-        attempts = 0
-        while len(results) < samples and attempts < samples * 3:
-            attempts += 1
-            r = await self._doctor.diagnose(card, DiagnosticTools(self._patient))
-            session = r.doctor_session or []
-            rejected = any("REJECT" in e for e in session if "scene_review:" in e)
-            if not rejected:
-                results.append(r)
+        """Batch generate N scenarios, review, then execute all."""
+        # Phase 1: Batch generate all scenarios at once
+        scenarios = await self._doctor.batch_generate_scenarios(card, samples)
+        while len(scenarios) < samples:
+            extra = await self._doctor.batch_generate_scenarios(card, samples - len(scenarios))
+            scenarios.extend(extra)
+
+        # Phase 2: Execute all scenarios in parallel
+        sem = asyncio.Semaphore(10)
+        async def run_one(s):
+            async with sem:
+                return await self._doctor.diagnose(card, DiagnosticTools(self._patient), scenario_hint=s)
+        results = await asyncio.gather(*[run_one(s) for s in scenarios[:samples]])
 
         healthy_count = sum(1 for r in results if r.healthy)
         rate = healthy_count / samples

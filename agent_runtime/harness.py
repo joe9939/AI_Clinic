@@ -11,7 +11,8 @@ class Tool:
     name: str
     description: str
     parameters: dict  # JSON schema
-    fn: Callable = None  # Implementation. If None, returns empty string.
+    fn: Callable = None  # Sync implementation. If None, returns empty string.
+    sandbox_fn: Callable = None  # Async sandbox-backed implementation. Takes sandbox as first arg.
     is_dangerous: bool = False  # High-privilege tool?
 
 
@@ -75,8 +76,9 @@ class AgentRuntime:
         result = await runtime.run("Find weather in Paris")
     """
 
-    def __init__(self, chat_fn: Callable):
+    def __init__(self, chat_fn: Callable, sandbox=None):
         self._chat = chat_fn  # async (messages, tools) -> response
+        self._sandbox = sandbox
         self._tools: dict[str, Tool] = {}
 
     def register_tool(self, tool: Tool):
@@ -144,7 +146,15 @@ class AgentRuntime:
                 is_hallucinated = tool is None
                 
                 # Execute tool
-                if tool and tool.fn:
+                if tool and tool.sandbox_fn and self._sandbox:
+                    try:
+                        if asyncio.iscoroutinefunction(tool.sandbox_fn):
+                            result = await tool.sandbox_fn(self._sandbox, **fn_args)
+                        else:
+                            result = tool.sandbox_fn(self._sandbox, **fn_args)
+                    except Exception as e:
+                        result = f"Error: {e}"
+                elif tool and tool.fn:
                     try:
                         result = tool.fn(**fn_args)
                     except Exception as e:

@@ -240,7 +240,7 @@ function renderFeatured() {
           <span>📋 ${latest.total_symptoms} symptoms</span>
           <span>✅ <span class="ok">${latest.asymptomatic}</span> asymptomatic</span>
           <span>❌ <span class="sym">${latest.symptomatic}</span> symptomatic</span>
-          <span>${latest.samples || '-'} samples each</span>
+          <span>📝 Text: ${latest.text_score || latest.score}%</span>
           ${latest.agent_score ? `<span>🤖 Agent: ${latest.agent_score}%</span>` : ''}
         </div>
         ${latest.personality ? `<p style="color:var(--text2);font-style:italic;margin-top:8px;font-size:0.85rem;">${latest.personality.slice(0,120)}… <span class="read-more" onclick="showDetail('${encodeURIComponent(latest.model)}')" style="color:var(--accent);cursor:pointer;">read more →</span></p>` : ''}

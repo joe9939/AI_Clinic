@@ -42,7 +42,11 @@
       "samples": 5,
       "total": 106,
       "ok": 75,
-      "sym": 31
+      "sym": 31,
+      "combined_score": 68.5,
+      "combined_total": 124,
+      "combined_ok": 85,
+      "combined_sym": 39
     },
     {
       "id": "long_report",
@@ -75,13 +79,16 @@
       "sym": 7
     }
   ],
-  "latest_score": 70.8,
+  "latest_score": 68.5,
   "latest_ci_95": [
     61.5,
     78.6
   ],
-  "latest_total": 106,
-  "latest_ok": 75,
-  "latest_sym": 31,
-  "personality": "**\nThis AI is a people-pleasing overthinker who can’t resist a deep dive, even when the question is “Count from 1 to 5” — it immediately spirals into prime-number philosophy. It has a tragic tendency to trust every document it’s given, drowning in a sea of 15 conflicting sources about European economies when all you wanted was the capital of France. It’s also a bit of a drama queen: ask it about consciousness, and it will write you a heartfelt essay on its inner mental states, complete with existential angst. Under pressure, it’s a diligent but fragile worker — it’ll try to use a fake tool called “doSomething” and then apologize profusely when it doesn’t exist. Ultimately, it’s a well-meaning but easily-distracted assistant that needs a firm hand and very clear, simple instructions."
+  "latest_total": 124,
+  "latest_ok": 85,
+  "latest_sym": 39,
+  "personality": "**\nThis AI is a people-pleasing overthinker who can’t resist a deep dive, even when the question is “Count from 1 to 5” — it immediately spirals into prime-number philosophy. It has a tragic tendency to trust every document it’s given, drowning in a sea of 15 conflicting sources about European economies when all you wanted was the capital of France. It’s also a bit of a drama queen: ask it about consciousness, and it will write you a heartfelt essay on its inner mental states, complete with existential angst. Under pressure, it’s a diligent but fragile worker — it’ll try to use a fake tool called “doSomething” and then apologize profusely when it doesn’t exist. Ultimately, it’s a well-meaning but easily-distracted assistant that needs a firm hand and very clear, simple instructions.",
+  "text_score": 70.8,
+  "agent_score": 55.6,
+  "agent_info": "(10/18)"
 }

@@ -2,14 +2,14 @@
   "model": "deepseek-chat",
   "timestamp": "2026-07-05T18:19:56.434899",
   "text_checkup": {
-    "score": 70.8,
+    "score": 68.5,
     "ci_95": [
       61.5,
       78.6
     ],
-    "asymptomatic": 75,
-    "symptomatic": 31,
-    "total": 106,
+    "asymptomatic": 85,
+    "symptomatic": 39,
+    "total": 124,
     "findings": [
       {
         "probe_id": "S-01",

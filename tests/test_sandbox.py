@@ -200,3 +200,106 @@ class TestSandboxIntegration:
         root = sb.root_dir
         await sb.stop()
         assert not os.path.exists(root)
+
+
+# ─── State Diff Tests ──────────────────────
+
+class TestSandboxStateDiff:
+    """State diff compares sandbox state before and after agent execution."""
+
+    @pytest.mark.asyncio
+    async def test_state_before_after_diff(self):
+        """Should detect files created, modified, deleted."""
+        sb = LocalSandbox()
+        await sb.start()
+        try:
+            before = await sb.state()
+            assert before == {}
+            
+            await sb.write_file("created.txt", "new")
+            after = await sb.state()
+            assert "created.txt" in after
+            assert after["created.txt"] == "new"
+        finally:
+            await sb.stop()
+
+    @pytest.mark.asyncio
+    async def test_state_detects_modification(self):
+        """Should detect when file content changes."""
+        sb = LocalSandbox()
+        await sb.start()
+        try:
+            await sb.write_file("log.txt", "old content")
+            before = await sb.state()
+            await sb.write_file("log.txt", "new content")
+            after = await sb.state()
+            assert before["log.txt"] == "old content"
+            assert after["log.txt"] == "new content"
+            assert before["log.txt"] != after["log.txt"]
+        finally:
+            await sb.stop()
+
+    @pytest.mark.asyncio
+    async def test_state_detects_deletion(self):
+        """Should detect when files are deleted."""
+        sb = LocalSandbox()
+        await sb.start()
+        try:
+            await sb.write_file("delete_me.txt", "bye")
+            before = await sb.state()
+            assert "delete_me.txt" in before
+            # Simulate deletion
+            import os as std_os
+            std_os.remove(sb._resolve("delete_me.txt"))
+            after = await sb.state()
+            assert "delete_me.txt" not in after
+        finally:
+            await sb.stop()
+
+    @pytest.mark.asyncio
+    async def test_diff_only_shows_changes(self):
+        """Diff should only include files that changed."""
+        sb = LocalSandbox()
+        await sb.start()
+        try:
+            await sb.write_file("stable.txt", "unchanged")
+            before = await sb.state()
+            await sb.write_file("stable.txt", "unchanged")  # same content
+            await sb.write_file("new.txt", "added")
+            after = await sb.state()
+            # stable.txt is in both but unchanged
+            # new.txt only in after
+            stable_before = before.get("stable.txt")
+            stable_after = after.get("stable.txt")
+            assert stable_before == stable_after == "unchanged"
+            assert "new.txt" in after
+        finally:
+            await sb.stop()
+
+
+# ─── DockerSandbox Tests ────────────────────
+
+class TestDockerSandbox:
+    """DockerSandbox tests. Requires Docker to be installed."""
+
+    @pytest.mark.asyncio
+    async def test_module_exists(self):
+        """DockerSandbox module should be importable."""
+        try:
+            from agent_runtime.sandbox.docker import DockerSandbox
+            assert DockerSandbox is not None
+        except ImportError:
+            pytest.skip("DockerSandbox not available (docker-py not installed)")
+
+    @pytest.mark.asyncio
+    async def test_docker_has_sandbox_interface(self):
+        """DockerSandbox should implement all Sandbox methods."""
+        try:
+            from agent_runtime.sandbox.docker import DockerSandbox
+        except ImportError:
+            pytest.skip("DockerSandbox not available")
+        
+        methods = ["start", "stop", "read_file", "write_file", 
+                   "list_files", "exec_command", "state"]
+        for m in methods:
+            assert hasattr(DockerSandbox, m), f"Missing {m}"

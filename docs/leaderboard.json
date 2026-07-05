@@ -36,7 +36,7 @@
     "agent_score": 55.6,
     "agent_healthy": 10,
     "agent_total": 18,
-    "persona_tag": "a people-pleasing overthinker who can\u2019t"
+    "persona_tag": "People-Pleasing Overthinker"
   },
   {
     "checkup_id": "ck_deepseek_full_001",
@@ -72,6 +72,6 @@
     "timestamp": 1783180152.1814268,
     "samples": 8,
     "plan": [],
-    "persona_tag": "a nervous overthinker with a"
+    "persona_tag": "Overthinker"
   }
 ]

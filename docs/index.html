@@ -284,7 +284,8 @@ function showDetail(modelKey) {
   document.getElementById('pane-leaderboard').classList.remove('active');
   document.getElementById('pane-detail').classList.add('active');
   document.querySelectorAll('.tab-link').forEach(t=>t.classList.remove('active'));
-  const entry = leaderboardData.find(e=>encodeURIComponent(e.model)===modelKey);
+  const entries = leaderboardData.filter(e=>encodeURIComponent(e.model)===modelKey);
+  const entry = entries.reduce((a,b)=>((a.timestamp||0)>(b.timestamp||0)?a:b), {});
   if (!entry) return;
   let html = `<h2 style="font-size:1.5rem;">${entry.model_label||entry.model}</h2>
     <div style="display:flex;gap:20px;margin:12px 0;flex-wrap:wrap;">
@@ -334,7 +335,8 @@ function showDetail(modelKey) {
 }
 
 function openModal(model) {
-  const entry = leaderboardData.find(e => e.model === model);
+  const entries = leaderboardData.filter(e => e.model === model);
+  const entry = entries.reduce((a,b)=>((a.timestamp||0)>(b.timestamp||0)?a:b), {});
   if (entry && entry.personality) {
     document.getElementById('modal-title').textContent = (entry.model_label || entry.model) + ' — Personality';
     document.getElementById('modal-content').textContent = entry.personality.replace(/\*\*/g, '');

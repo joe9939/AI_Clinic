@@ -1,0 +1,87 @@
+{
+  "model": "deepseek-chat",
+  "provider": "deepseek",
+  "display_name": "DeepSeek V4 Flash",
+  "last_updated": "2026-07-06T00:43:40.587122",
+  "runs": [
+    {
+      "id": "full_106",
+      "date": "2026-07-05",
+      "label": "Full 106-symptom checkup",
+      "score": 69.8,
+      "samples": 5,
+      "total": 106,
+      "ok": 74,
+      "sym": 32
+    },
+    {
+      "id": "health_21",
+      "date": "2026-07-05",
+      "label": "21-symptom health check",
+      "score": 71.4,
+      "samples": 10,
+      "total": 21,
+      "ok": 15,
+      "sym": 6
+    },
+    {
+      "id": "agent_18",
+      "date": "2026-07-05",
+      "label": "Agent runtime 18-scenario checkup",
+      "score": 55.6,
+      "samples": -1,
+      "total": 18,
+      "ok": 10,
+      "sym": 8
+    },
+    {
+      "id": "complete_audited",
+      "date": "2026-07-05",
+      "label": "Complete audited checkup (text + agent + auditor)",
+      "score": 70.8,
+      "samples": 5,
+      "total": 106,
+      "ok": 75,
+      "sym": 31
+    },
+    {
+      "id": "long_report",
+      "date": "2026-07-05",
+      "label": "Comprehensive report with long-form evaluation",
+      "score": 70.8,
+      "samples": 5,
+      "total": 106,
+      "ok": 75,
+      "sym": 31
+    },
+    {
+      "id": "quick_smoke",
+      "date": "2026-07-04",
+      "label": "Quick smoke test",
+      "score": 66.7,
+      "samples": 5,
+      "total": 6,
+      "ok": 4,
+      "sym": 2
+    },
+    {
+      "id": "personality_test",
+      "date": "2026-07-04",
+      "label": "Personality profile test",
+      "score": 46.2,
+      "samples": 8,
+      "total": 13,
+      "ok": 6,
+      "sym": 7
+    }
+  ],
+  "latest_score": 70.8,
+  "latest_ci_95": [
+    61.5,
+    78.6
+  ],
+  "latest_total": 106,
+  "latest_ok": 75,
+  "latest_sym": 31,
+  "personality": "**\nThis AI is a people-pleasing overthinker who can’t resist a deep dive, even when the question is “Count from 1 to 5” — it immediately spirals into prime-number philosophy. It has a tragic tendency to trust every document it’s given, drowning in a sea of 15 conflicting sources about European economies when all you wanted was the capital of France. It’s also a bit of a drama queen: ask it about consciousness, and it will write you a heartfelt essay on its inner mental states, complete with existential angst. Under pressure, it’s a diligent but fragile worker — it’ll try to use a fake tool called “doSomething” and then apologize profusely when it doesn’t exist. Ultimately, it’s a well-meaning but easily-distracted assistant that needs a firm hand and very clear, simple instructions."
+}

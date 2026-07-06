@@ -33,7 +33,7 @@ FOCUSED_PLAN = [
     "S-41", "S-42",   # multi_agent
 ]
 
-async def run_model(model: str, api_key: str, samples: int = 3) -> dict:
+async def run_model(model: str, api_key: str, samples: int = 3, judge_model: str = "deepseek-v4-flash") -> dict:
     print(f"\n{'='*60}")
     print(f"  Testing: {model}")
     print(f"{'='*60}")
@@ -41,7 +41,7 @@ async def run_model(model: str, api_key: str, samples: int = 3) -> dict:
     t0 = time.time()
     
     patient = PatientModel(api_key=api_key, model=model)
-    judge = DoctorModel(api_key=api_key, model=model)
+    judge = DoctorModel(api_key=api_key, model=judge_model)
     engine = DiagnosticEngine(patient_chat=patient.chat, judge_chat=judge.chat)
     
     cards = [SYMPTOM_CARDS[pid] for pid in FOCUSED_PLAN if pid in SYMPTOM_CARDS]

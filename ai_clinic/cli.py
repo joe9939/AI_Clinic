@@ -97,7 +97,7 @@ async def _run_compare(args):
     for model in models:
         print(f"  Testing {model}...")
         patient = PatientModel(api_key=key, model=model)
-        judge = DoctorModel(api_key=key, model=args.judge or model)
+    judge = DoctorModel(api_key=key, model=args.judge or "deepseek-v4-flash")
         engine = DiagnosticEngine(patient_chat=patient.chat, judge_chat=judge.chat)
         r = await engine.run_plan(cards, samples=args.samples or 3, concurrency=5)
         results.append({"model": model, "score": r["overall"]["score"],

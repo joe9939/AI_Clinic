@@ -19,6 +19,7 @@ async def main():
     
     # Build text_report format expected by build_long_report_prompt
     text_report = {
+        "model": model,
         "overall": raw["overall"],
         "findings": raw.get("findings", []),
         "asymptomatic": raw.get("asymptomatic", 0),

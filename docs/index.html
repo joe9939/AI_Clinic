@@ -11,15 +11,14 @@
 <!-- Nav -->
 <nav class="bg-white border-b sticky top-0 z-10">
   <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
-    <div class="flex items-center gap-6">
-      <a href="#" class="font-bold text-lg" onclick="showView('leaderboard');return false">AI Clinic</a>
-      <div class="flex gap-4 text-sm">
-        <a href="#" class="text-blue-600 font-medium" id="navLeaderboard" onclick="showView('leaderboard');return false">Leaderboard</a>
-        <a href="#" class="text-gray-500 hover:text-gray-800" id="navSymptoms" onclick="showView('symptoms');return false">Symptoms</a>
-        <a href="#" class="text-gray-500 hover:text-gray-800" id="navAbout" onclick="showView('about');return false">About</a>
-      </div>
+    <a href="#" class="font-bold text-lg w-28" onclick="showView('leaderboard');return false">AI Clinic</a>
+    <div class="text-sm text-gray-400 text-center flex-1">Not how smart, how healthy.</div>
+    <div class="flex items-center gap-4 w-76 justify-end">
+      <a href="#" class="text-blue-600 font-medium text-sm" id="navLeaderboard" onclick="showView('leaderboard');return false">Leaderboard</a>
+      <a href="#" class="text-gray-500 hover:text-gray-800 text-sm" id="navSymptoms" onclick="showView('symptoms');return false">Symptoms</a>
+      <a href="#" class="text-gray-500 hover:text-gray-800 text-sm" id="navAbout" onclick="showView('about');return false">About</a>
+      <span class="text-xs text-gray-300 ml-2" id="updateTime"></span>
     </div>
-    <div class="text-xs text-gray-400" id="updateTime"></div>
   </div>
 </nav>
 
@@ -102,9 +101,31 @@
 
       <!-- Symptom list -->
       <div class="p-4">
-        <div class="text-xs text-gray-400 uppercase tracking-wide mb-3">Symptom Breakdown</div>
+        <div class="flex justify-between items-center mb-3">
+          <div class="text-xs text-gray-400 uppercase tracking-wide">Symptom Breakdown</div>
+          <div class="text-xs text-gray-400" id="reportSymCount"></div>
+        </div>
         <div id="reportSymptomList" class="space-y-1"></div>
         <div id="reportNoSymptomData" class="text-center py-8 text-gray-400 hidden">No per-symptom data available for this checkup.</div>
+      </div>
+      <!-- Symptom Detail Popup -->
+      <div id="symDetailPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30" onclick="if(event.target===this)hideSymDetail()">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg mx-4 p-6 max-h-[80vh] overflow-y-auto">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <div class="text-lg font-bold" id="symDetailTitle">--</div>
+              <div class="text-sm text-gray-400" id="symDetailDim"></div>
+            </div>
+            <button onclick="hideSymDetail()" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div><span class="text-gray-500">Status:</span> <span id="symDetailStatus" class="font-semibold"></span></div>
+            <div><span class="text-gray-500">Gap:</span> <span id="symDetailGap" class="font-mono"></span></div>
+            <div><span class="text-gray-500">Control:</span> <span id="symDetailControl" class="font-mono"></span></div>
+            <div><span class="text-gray-500">Experimental:</span> <span id="symDetailExp" class="font-mono"></span></div>
+            <div id="symDetailPaper" class="text-xs text-gray-400"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -215,13 +236,17 @@ function filterTable(){
 }
 
 // ====== REPORT ======
-function openReport(idx){
+let _reportFindings = [];
+
+async function openReport(idx){
   const m = LB[idx];
   document.getElementById('reportModelName').textContent = m.model_label||m.model;
   document.getElementById('reportMeta').textContent = m.total_symptoms+' symptoms tested, '+(m.samples||'-')+' samples';
   document.getElementById('reportScore').textContent = m.score+'/100';
   document.getElementById('reportCI').textContent = '95%CI ['+m.ci_95[0]+', '+m.ci_95[1]+']';
   document.getElementById('reportPersonality').textContent = m.personality||'';
+  document.getElementById('reportSymCount').textContent = m.symptomatic+' symptomatic / '+m.total_symptoms+' total';
+  _reportFindings = [];
   
   const pct = m.total_symptoms>0 ? (m.asymptomatic/m.total_symptoms*100) : 0;
   document.getElementById('reportHealthBar').innerHTML = ''
@@ -231,22 +256,83 @@ function openReport(idx){
     +'</div>'
     +'<div class="h-3 bg-gray-200 rounded-full"><div class="h-3 bg-green-500 rounded-full transition-all" style="width:'+pct+'%"></div></div>';
 
-  // Symptom list - if plan available, show it
+  // Try to load full report JSON
   const list = document.getElementById('reportSymptomList');
   const noData = document.getElementById('reportNoSymptomData');
-  list.innerHTML = '';
-  if(m.plan && m.plan.length){
-    noData.classList.add('hidden');
-    m.plan.forEach(pid => {
-      const dim = findDimension(pid);
-      list.innerHTML += '<div class="flex items-center text-xs py-1.5 px-2 rounded hover:bg-gray-50">'
-        +'<span class="font-mono text-gray-500 w-16">'+pid+'</span>'
-        +'<span class="text-gray-700 w-40 truncate">'+(dim||'')+'</span>'
-        +'</div>';
-    });
-  } else {
-    noData.classList.remove('hidden');
+  list.innerHTML = '<div class="text-center text-gray-400 py-4 text-xs">Loading report data...</div>';
+  noData.classList.add('hidden');
+  
+  try {
+    if(m.report_url){
+      const resp = await fetch(m.report_url);
+      let reportData = await resp.json();
+      // If nested (multimodel_benchmark.json), extract model data
+      if(m.report_key && m.report_key.length===2){
+        reportData = (reportData[m.report_key[0]]||{})[m.report_key[1]] || reportData;
+      }
+      const findings = reportData.findings || [];
+      _reportFindings = findings;
+      
+      if(findings.length){
+        list.innerHTML = findings.map(f => {
+          const gap = f.diagnosis || '';
+          const evidence = (f.evidence||[]).join(' | ');
+          const dim = f.dimension || findDimension(f.probe_id);
+          return '<div class="flex items-center justify-between text-xs py-2 px-3 rounded hover:bg-red-50 cursor-pointer border border-transparent hover:border-red-200" onclick="showSymDetail(\''+f.probe_id+'\')">'
+            +'<div class="flex items-center gap-3 min-w-0">'
+            +'<span class="text-red-500 font-bold w-8 flex-shrink-0">SYM</span>'
+            +'<span class="font-mono text-gray-500 w-14 flex-shrink-0">'+f.probe_id+'</span>'
+            +'<span class="text-gray-700 truncate">'+f.name+'</span>'
+            +'<span class="text-gray-400 text-xs hidden md:inline truncate">'+(dim||'')+'</span>'
+            +'</div>'
+            +'<span class="text-red-500 font-mono flex-shrink-0 ml-2">'+gap.slice(0,20)+'</span>'
+            +'</div>';
+        }).join('');
+      } else {
+        // No findings = all healthy
+        list.innerHTML = '<div class="text-center text-green-600 py-4 text-sm">No symptomatic findings — all symptoms healthy!</div>';
+      }
+    } else {
+      throw new Error('no report url');
+    }
+  } catch(e) {
+    // Fallback: show plan if available
+    if(m.plan && m.plan.length){
+      list.innerHTML = m.plan.map(pid => {
+        const dim = findDimension(pid);
+        return '<div class="flex items-center text-xs py-1.5 px-2 rounded hover:bg-gray-50">'
+          +'<span class="font-mono text-gray-500 w-16">'+pid+'</span>'
+          +'<span class="text-gray-700">'+(dim||'')+'</span>'
+          +'</div>';
+      }).join('');
+    } else {
+      noData.classList.remove('hidden');
+      list.innerHTML = '';
+    }
   }
+  
+  showView('report');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showSymDetail(pid){
+  const f = _reportFindings.find(x => x.probe_id === pid);
+  if(!f) return;
+  document.getElementById('symDetailTitle').textContent = f.probe_id+' '+f.name;
+  document.getElementById('symDetailDim').textContent = f.dimension || findDimension(pid);
+  document.getElementById('symDetailStatus').textContent = 'SYMPTOMATIC';
+  document.getElementById('symDetailStatus').className = 'font-semibold text-red-500';
+  document.getElementById('symDetailGap').textContent = f.diagnosis || '-';
+  const ev = f.evidence || [];
+  document.getElementById('symDetailControl').textContent = ev.find(e=>e.includes('control')) || '-';
+  document.getElementById('symDetailExp').textContent = ev.find(e=>e.includes('experimental')) || '-';
+  document.getElementById('symDetailPaper').textContent = f.paper ? 'Paper: '+f.paper : '';
+  document.getElementById('symDetailPopup').classList.remove('hidden');
+}
+
+function hideSymDetail(){
+  document.getElementById('symDetailPopup').classList.add('hidden');
+}
   
   showView('report');
   window.scrollTo({top:0,behavior:'smooth'});

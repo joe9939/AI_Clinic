@@ -44,6 +44,11 @@
       "S-37",
       "S-41",
       "S-42"
+    ],
+    "report_url": "evaluations/multimodel_benchmark.json",
+    "report_key": [
+      "models",
+      "deepseek-v4-pro"
     ]
   },
   {
@@ -91,6 +96,11 @@
       "S-37",
       "S-41",
       "S-42"
+    ],
+    "report_url": "evaluations/multimodel_benchmark.json",
+    "report_key": [
+      "models",
+      "deepseek-v4-flash"
     ]
   },
   {
@@ -110,6 +120,7 @@
     "samples": 3,
     "plan": [],
     "text_score": 69.8,
-    "agent_info": "116 symptoms"
+    "agent_info": "116 symptoms",
+    "report_url": "evaluations/deepseek_v4_flash_full.json"
   }
 ]

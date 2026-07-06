@@ -38,9 +38,10 @@ for entry in lb:
     if plan:
         entry["plan"] = plan
     
-    # Add long report content (embedded for GH Pages compatibility)
+    # Add long report content (embedded)
     if total >= 116:
         entry["long_report_url"] = "report_long.json"
+        entry["eval_report_url"] = "eval_report.json"
         with open("report_long.json", encoding="utf-8") as f:
             lr = json.load(f)
         entry["long_report"] = lr.get("report", "")

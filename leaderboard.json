@@ -673,6 +673,7 @@
         "persona": "*Perseverating Looper*",
         "desc": "When a tool fails, the patient repeats the same action indefinitely (silent failure loops). It also demonstrates premature commitment, starting new trains of thought before finishing the current one, leading to incomplete or contradictory outputs."
       }
-    ]
+    ],
+    "eval_report_url": "eval_report.json"
   }
 ]

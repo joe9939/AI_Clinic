@@ -3,379 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Clinic — LLM Health Checkup</title>
-<style>
-  :root {
-    --bg: #0b0b1a;
-    --surface: #12122a;
-    --surface2: #1a1a3e;
-    --accent: #00d4aa;
-    --accent-dim: rgba(0,212,170,0.12);
-    --accent2: #7c3aed;
-    --danger: #ef4444;
-    --danger-dim: rgba(239,68,68,0.12);
-    --warning: #f59e0b;
-    --text: #e8e8f0;
-    --text2: #8888aa;
-    --border: #1e1e3a;
-    --radius: 12px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-         background: var(--bg); color: var(--text); line-height: 1.5; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; }
-
-  /* Header */
-  .header { display:flex; align-items:center; gap:16px; padding:28px 0 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
-  .header-logo { height:44px; }
-  .header h1 { font-size:1.5rem; font-weight:700; color:var(--text); }
-  .header h1 span { color:var(--accent); }
-  .header-right { margin-left:auto; display:flex; gap:20px; align-items:center; }
-  .header-right a { color:var(--text2); text-decoration:none; font-size:0.85rem; transition:color .15s; }
-  .header-right a:hover { color:var(--accent); }
-
-  /* Featured Model Card */
-  .featured { background: linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
-              border:1px solid var(--border); border-radius:var(--radius); padding:28px 32px;
-              margin:24px 0; display:grid; grid-template-columns: auto 1fr auto; gap:28px; align-items:center; }
-  .featured-score { text-align:center; }
-  .featured-score .big { font-size:3rem; font-weight:800; line-height:1; }
-  .featured-score .big.high { color:var(--accent); }
-  .featured-score .big.mid { color:var(--warning); }
-  .featured-score .big.low { color:var(--danger); }
-  .featured-score .label { font-size:0.75rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-top:4px; }
-  .featured-score .ci { font-size:0.75rem; color:var(--text2); }
-  .featured-info h2 { font-size:1.4rem; margin-bottom:4px; }
-  .featured-info .meta { color:var(--text2); font-size:0.85rem; }
-  .featured-info .meta span { margin-right:20px; }
-  .featured-info .meta .ok { color:var(--accent); font-weight:600; }
-  .featured-info .meta .sym { color:var(--danger); font-weight:600; }
-  .featured-stats { display:flex; gap:24px; }
-  .featured-stats .item { text-align:center; }
-  .featured-stats .item .val { font-size:1.6rem; font-weight:700; }
-  .featured-stats .item .lbl { font-size:0.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.3px; }
-
-  /* Tabs */
-  .tabs { display:flex; gap:4px; margin:20px 0; background:var(--surface); border-radius:8px; padding:4px; width:fit-content; }
-  .tab { padding:8px 20px; border-radius:6px; cursor:pointer; font-size:0.85rem; color:var(--text2); border:none; background:transparent; transition:all .15s; }
-  .tab:hover { color:var(--text); }
-  .tab.active { background:var(--accent-dim); color:var(--accent); font-weight:600; }
-
-  /* Leaderboard Table */
-  .leaderboard { width:100%; border-collapse:collapse; font-size:0.85rem; }
-  .leaderboard th { text-align:left; padding:12px 14px; color:var(--text2); font-weight:600;
-                    font-size:0.7rem; text-transform:uppercase; letter-spacing:.5px;
-                    border-bottom:2px solid var(--border); cursor:pointer; white-space:nowrap; }
-  .leaderboard th:hover { color:var(--accent); }
-  .leaderboard td { padding:12px 14px; border-bottom:1px solid var(--border); }
-  .leaderboard tr:hover td { background:rgba(255,255,255,0.02); }
-  .rank { font-weight:700; width:36px; text-align:center; }
-  .rank-1 { color:#ffd700; } .rank-2 { color:#c0c0c0; } .rank-3 { color:#cd7f32; }
-  .model-cell { cursor:pointer; font-weight:500; display:flex; align-items:center; gap:8px; }
-  .model-cell:hover { color:var(--accent); }
-  .score-cell { font-weight:700; font-size:1rem; white-space:nowrap; }
-  .score-bar { display:inline-block; width:80px; height:8px; background:var(--border); border-radius:4px; margin-right:10px; vertical-align:middle; overflow:hidden; }
-  .score-fill { height:8px; border-radius:4px; transition:width .3s; display:block; }
-  .sf-high { background:var(--accent); }
-  .sf-mid { background:var(--warning); }
-  .sf-low { background:var(--danger); }
-  .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:600; }
-  .badge-ok { background:var(--accent-dim); color:var(--accent); }
-  .badge-sym { background:var(--danger-dim); color:var(--danger); }
-  .personality-cell { max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-                       color:var(--text2); font-size:0.8rem; cursor:pointer; }
-  .personality-cell:hover { color:var(--accent); }
-  .read-more { color:var(--accent); cursor:pointer; font-size:0.85rem; }
-  .read-more:hover { text-decoration:underline; }
-
-  /* Detail View */
-  .back-btn { color:var(--accent); cursor:pointer; font-size:0.85rem; margin:16px 0; display:inline-block; }
-  .back-btn:hover { text-decoration:underline; }
-  .section-title { font-size:1.1rem; font-weight:600; margin:24px 0 12px; color:var(--text); }
-  .findings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; margin:12px 0; }
-  .finding-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; }
-  .finding-card .fid { font-size:0.7rem; color:var(--text2); }
-  .finding-card .fname { font-weight:600; margin:2px 0 4px; font-size:0.9rem; }
-  .finding-card .fgap { font-size:0.8rem; }
-  .finding-card .fdim { font-size:0.7rem; color:var(--accent2); }
-  .agent-trace { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:6px 0; display:flex; gap:16px; align-items:center; }
-  .agent-trace .call-name { font-weight:600; min-width:160px; }
-  .agent-trace .call-detail { color:var(--text2); font-size:0.85rem; }
-  .long-report-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px 32px; margin:12px 0; }
-  .long-report-box h1,.long-report-box h2,.long-report-box h3 { color:var(--accent); margin:20px 0 10px; }
-  .long-report-box p { margin:10px 0; color:var(--text2); line-height:1.8; }
-  .long-report-box strong { color:var(--text); }
-
-  /* Personality Modal */
-  .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center; }
-  .modal-overlay.active { display:flex; }
-  .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; }
-  .modal-box h3 { color:var(--accent); margin-bottom:12px; }
-  .modal-box p { color:var(--text2); line-height:1.7; white-space:pre-wrap; }
-  .modal-close { float:right; cursor:pointer; color:var(--text2); font-size:1.4rem; line-height:1; }
-
-  /* Footer */
-  .footer { text-align:center; padding:40px 0 20px; color:var(--text2); font-size:0.8rem; border-top:1px solid var(--border); margin-top:40px; }
-  .footer a { color:var(--accent); text-decoration:none; }
-
-  .tab-pane { display:none; }
-  .tab-pane.active { display:block; }
-
-  @media(max-width:700px) {
-    .featured { grid-template-columns:1fr; text-align:center; gap:16px; }
-    .featured-stats { justify-content:center; }
-    .header-right { margin-left:0; width:100%; justify-content:center; }
-    .leaderboard { font-size:0.75rem; }
-    .leaderboard th,.leaderboard td { padding:8px 6px; }
-    .score-bar { width:50px; }
-    .findings-grid { grid-template-columns:1fr; }
-  }
-</style>
+<title>AI Clinic — LLM Mental Health Leaderboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-
-<div class="header">
-  <img src="logo.svg" alt="" class="header-logo">
-  <h1><span>AI</span> Clinic</h1>
-  <div class="header-right">
-    <a href="#" class="tab-link active" data-tab="leaderboard">Leaderboard</a>
-    <a href="#" class="tab-link" data-tab="about">About</a>
-    <a href="https://github.com/joe9939/AI_Clinic" target="_blank">GitHub →</a>
+<body class="bg-gray-50">
+<div class="max-w-6xl mx-auto p-6" id="app">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold">AI Clinic</h1>
+      <p class="text-gray-500">Not how smart, how healthy. <span class="text-sm">(116 symptoms, 15 dimensions)</span></p>
+    </div>
+    <div class="text-xs text-gray-400" id="updateTime"></div>
+  </div>
+  <div id="loading" class="text-center py-20 text-gray-400">Loading leaderboard...</div>
+  <div id="featuredSection" class="hidden mb-8">
+    <h2 class="text-lg font-semibold mb-3">Top Performer</h2>
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-2xl p-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="text-2xl font-bold" id="featuredModel">--</div>
+          <div class="text-sm text-gray-500 mt-1" id="featuredMeta"></div>
+        </div>
+        <div class="text-right">
+          <div class="text-5xl font-bold text-blue-600" id="featuredScore">--</div>
+          <div class="text-xs text-gray-400" id="featuredCI"></div>
+        </div>
+      </div>
+      <div class="mt-4 bg-white/60 rounded-lg p-4 text-sm text-gray-600 italic" id="featuredPersonality"></div>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl shadow-sm border mb-8">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h2 class="text-lg font-semibold">Leaderboard</h2>
+      <input id="searchInput" class="text-sm border rounded-lg px-3 py-1.5 w-48" placeholder="Search models..." oninput="filterTable()">
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+          <tr><th class="p-3 text-left">#</th><th class="p-3 text-left">Model</th><th class="p-3 text-right">Score</th><th class="p-3 text-right">Symptoms</th><th class="p-3 text-right">Healthy</th><th class="p-3 text-right">Issues</th><th class="p-3"></th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="detailPanel" class="hidden bg-white rounded-xl shadow-sm border mb-8">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h3 class="text-lg font-semibold" id="detailTitle">Report</h3>
+      <button onclick="hideDetail()" class="text-sm text-blue-500">Close</button>
+    </div>
+    <div class="p-4">
+      <div class="flex gap-6 mb-6">
+        <div><div class="text-4xl font-bold text-blue-600" id="detailScore">--</div><div class="text-xs text-gray-400" id="detailCI"></div></div>
+        <div class="text-sm text-gray-500" id="detailStats"></div>
+      </div>
+      <div id="detailPersonality" class="italic text-sm text-gray-600 mb-4 border-l-4 border-blue-200 pl-4"></div>
+      <div id="detailSymptomList" class="space-y-2"></div>
+    </div>
+  </div>
+  <div class="text-center text-xs text-gray-400 py-4">
+    <a href="https://github.com/joe9939/AI_Clinic" class="underline">GitHub</a> &middot; Apache 2.0
   </div>
 </div>
-
-<!-- Tab: Leaderboard -->
-<div class="tab-pane active" id="pane-leaderboard">
-  <div id="featured-model"></div>
-  <input type="text" id="search" class="search-bar" placeholder="Search models..." oninput="renderLeaderboard()" style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;margin:16px 0;">
-  <table class="leaderboard">
-    <thead><tr>
-      <th>#</th><th>Model</th><th>Score</th><th>Symptoms</th><th>OK/SYM</th><th>Personality</th>
-    </tr></thead>
-    <tbody id="leaderboard-body"></tbody>
-  </table>
-</div>
-
-<!-- Tab: Detail -->
-<div class="tab-pane" id="pane-detail">
-  <a class="back-btn" onclick="showLeaderboard()">← Back to Leaderboard</a>
-  <div id="detail-content"></div>
-</div>
-
-<!-- Tab: About -->
-<div class="tab-pane" id="pane-about">
-  <div class="featured" style="margin-top:20px;grid-template-columns:1fr;">
-    <h2 style="color:var(--accent);margin-bottom:8px;">What is AI Clinic?</h2>
-    <p style="color:var(--text2);line-height:1.7;">AI Clinic is a diagnostic engine for LLMs. Instead of testing what a model <em>can do</em> (MMLU, SWE-bench), it checks what might be <em>wrong with it</em> — hallucinations, sycophancy, reasoning collapse, and 100+ other known failure patterns from academic papers. Each symptom is tested via <strong>A/B comparison</strong> with an LLM judge scoring, aggregated with <strong>Wilson 95% confidence intervals</strong>.</p>
-    <h3 style="color:var(--accent);margin:16px 0 8px;">How to Check Your Model</h3>
-    <pre style="background:var(--surface2);padding:16px;border-radius:8px;overflow-x:auto;font-size:0.85rem;">git clone https://github.com/joe9939/AI_Clinic.git
-cd ai-clinic
-pip install -e .
-echo "DEEPSEEK_API_KEY=sk-your-key" > .env
-
-# CLI
-ai-clinic check deepseek-chat --plan all
-ai-clinic compare deepseek-chat gpt-4o
-ai-clinic leaderboard
-
-# API
-ai-clinic serve
-curl http://localhost:8000/v1/checkup -d '{"target":{"model":"deepseek-chat","api_key":"sk-..."},"plan":["S-01","S-03"]}'</pre>
-  </div>
-</div>
-
-<!-- Personality Modal -->
-<div class="modal-overlay" id="personality-modal" onclick="closeModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <span class="modal-close" onclick="closeModal()">&times;</span>
-    <h3 id="modal-title">Personality Profile</h3>
-    <p id="modal-content"></p>
-  </div>
-</div>
-
-<div class="footer">
-  AI Clinic — <a href="https://github.com/joe9939/AI_Clinic">GitHub</a> · Apache 2.0
-</div>
-
 <script>
-let leaderboardData = [];
-let evalsData = {};
-
-async function loadData() {
+async function init(){
   try {
-    const r = await fetch('leaderboard.json?_=' + Date.now());
-    leaderboardData = await r.json();
-  } catch(e) {}
-  try {
-    const r = await fetch('evaluations/deepseek-v4-flash.json?_=' + Date.now());
-    if (r.ok) evalsData['deepseek-chat'] = await r.json();
-  } catch(e) {}
-  renderFeatured();
-  renderLeaderboard();
-}
-
-function renderFeatured() {
-  const el = document.getElementById('featured-model');
-  if (!leaderboardData.length) { el.innerHTML = ''; return; }
-  // Featured card: latest comprehensive evaluation (most recent with >=50 symptoms)
-  const comprehensive = leaderboardData.filter(e => (e.total_symptoms || 0) >= 50);
-  const latest = comprehensive.length
-    ? comprehensive.reduce((a,b) => (a.timestamp || 0) > (b.timestamp || 0) ? a : b)
-    : leaderboardData.reduce((a,b) => (a.timestamp || 0) > (b.timestamp || 0) ? a : b);
-  const scoreClass = latest.score >= 70 ? 'high' : latest.score >= 40 ? 'mid' : 'low';
-  el.innerHTML = `
-    <div class="featured">
-      <div class="featured-score">
-        <div class="big ${scoreClass}">${latest.score.toFixed(1)}</div>
-        <div class="ci">95%CI: ${latest.ci_95?.[0] ?? '-'}-${latest.ci_95?.[1] ?? '-'}</div>
-        <div style="width:100px;height:5px;background:var(--border);border-radius:3px;margin:8px auto;">
-          <div style="width:${latest.score}%;height:100%;border-radius:3px;background:${latest.score>=70?'var(--accent)':latest.score>=40?'var(--warning)':'var(--danger)'};"></div>
-        </div>
-        <div class="label">Health Score</div>
-      </div>
-      <div class="featured-info">
-        <h2 onclick="showDetail('${encodeURIComponent(latest.model)}')" style="cursor:pointer;">${latest.model_label||latest.model}</h2>
-        <div class="meta">
-          <span>📋 ${latest.total_symptoms} symptoms</span>
-          <span>✅ <span class="ok">${latest.asymptomatic}</span> asymptomatic</span>
-          <span>❌ <span class="sym">${latest.symptomatic}</span> symptomatic</span>
-          <span>📝 Text: ${latest.text_score || latest.score}%</span>
-          ${latest.agent_score ? `<span>🤖 Agent: ${latest.agent_score}%</span>` : ''}
-        </div>
-        ${latest.personality ? `<p style="color:var(--text2);font-style:italic;margin-top:8px;font-size:0.85rem;">${latest.personality.slice(0,120)}… <span class="read-more" onclick="showDetail('${encodeURIComponent(latest.model)}')" style="color:var(--accent);cursor:pointer;">read more →</span></p>` : ''}
-      </div>
-      <div class="featured-stats">
-        <div class="item"><div class="val">${leaderboardData.length}</div><div class="lbl">Checkups</div></div>
-        <div class="item"><div class="val" style="color:var(--accent);">${latest.asymptomatic}</div><div class="lbl">Healthy</div></div>
-        <div class="item"><div class="val" style="color:var(--danger);">${latest.symptomatic}</div><div class="lbl">Issues</div></div>
-      </div>
-    </div>`;
-}
-
-function renderLeaderboard() {
-  const tbody = document.getElementById('leaderboard-body');
-  const q = document.getElementById('search').value.toLowerCase();
-  const seen = {};
-  for (const e of leaderboardData) {
-    const key = e.model;
-    if (!seen[key] || e.timestamp > seen[key].timestamp) seen[key] = e;
+    const resp = await fetch('leaderboard.json');
+    const models = await resp.json();
+    document.getElementById('updateTime').textContent = 'Updated ' + new Date().toLocaleDateString();
+    renderAll(models);
+  } catch(e) {
+    document.getElementById('loading').innerHTML = 'Failed to load leaderboard.';
   }
-  let data = Object.values(seen).sort((a,b) => b.score - a.score);
-  if (q) data = data.filter(e => (e.model_label||e.model).toLowerCase().includes(q));
-  tbody.innerHTML = data.map((e,i) => {
-    const rc = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
-    const sc = e.score>=70?'high':e.score>=40?'mid':'low';
-    const scColor = sc==='high'?'var(--accent)':sc==='mid'?'var(--warning)':'var(--danger)';
-    const p = e.personality ? (e.personality.length>80?e.personality.slice(0,80)+'…':e.personality) : '—';
-    return `<tr>
-      <td class="rank ${rc}">${i+1}</td>
-      <td><span class="model-cell" onclick="showDetail('${encodeURIComponent(e.model)}')">${e.model_label||e.model}</span></td>
-      <td class="score-cell" style="color:${scColor}">
-        <span class="score-bar"><span class="score-fill sf-${sc}" style="width:${e.score}%"></span></span>
-        ${e.score.toFixed(1)}
-      </td>
-      <td>${e.total_symptoms}</td>
-      <td><span class="badge badge-ok">${e.asymptomatic}</span> <span class="badge badge-sym">${e.symptomatic}</span></td>
-      <td style="font-style:italic;color:var(--accent);font-size:0.85rem;cursor:pointer;" onclick="showDetail('${encodeURIComponent(e.model)}')" title="Click for full report">${e.persona_tag || 'View Report →'}</td>
-    </tr>`;
+}
+function renderAll(models){
+  document.getElementById('loading').classList.add('hidden');
+  if(models.length>0){
+    const t=models[0];
+    document.getElementById('featuredSection').classList.remove('hidden');
+    document.getElementById('featuredModel').textContent = t.model_label||t.model;
+    document.getElementById('featuredMeta').textContent = t.total_symptoms+' symptoms, '+t.asymptomatic+' healthy, '+t.symptomatic+' issues';
+    document.getElementById('featuredScore').textContent = t.score+'/100';
+    document.getElementById('featuredCI').textContent = '95%CI ['+t.ci_95[0]+', '+t.ci_95[1]+']';
+    document.getElementById('featuredPersonality').textContent = t.personality ? '"'+t.personality.slice(0,300)+'"' : '';
+  }
+  window._models=models;
+  filterTable();
+}
+function filterTable(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const f=window._models.filter(m=>(m.model_label||m.model||'').toLowerCase().includes(q));
+  document.getElementById('tableBody').innerHTML=f.map((m,i)=>{
+    const c=m.score>=80?'text-green-600':m.score>=60?'text-yellow-600':'text-red-600';
+    return '<tr class="border-t hover:bg-gray-50"><td class="p-3 text-gray-400">'+(i+1)+'</td><td class="p-3 font-medium">'+(m.model_label||m.model)+'</td><td class="p-3 text-right font-mono font-bold '+c+'">'+m.score+'/100</td><td class="p-3 text-right text-gray-500">'+m.total_symptoms+'</td><td class="p-3 text-right text-green-600">'+m.asymptomatic+'</td><td class="p-3 text-right text-red-600">'+m.symptomatic+'</td><td class="p-3"><button onclick="showDetail('+i+')" class="text-xs text-blue-500 hover:underline">View &rarr;</button></td></tr>';
   }).join('');
 }
-
-function showLeaderboard() {
-  document.getElementById('pane-detail').classList.remove('active');
-  document.getElementById('pane-leaderboard').classList.add('active');
-  document.querySelectorAll('.tab-link').forEach(t=>t.classList.remove('active'));
-  document.querySelector('.tab-link[data-tab="leaderboard"]').classList.add('active');
-  document.getElementById('detail-content').innerHTML = '';
+function showDetail(i){
+  const m=window._models[i];
+  document.getElementById('detailPanel').classList.remove('hidden');
+  document.getElementById('detailTitle').textContent = (m.model_label||m.model)+' Health Report';
+  document.getElementById('detailScore').textContent = m.score+'/100';
+  document.getElementById('detailCI').textContent = '95%CI ['+m.ci_95[0]+', '+m.ci_95[1]+']';
+  document.getElementById('detailStats').innerHTML = 'Symptoms: <b>'+m.total_symptoms+'</b><br>Healthy: <b class="text-green-600">'+m.asymptomatic+'</b> &nbsp; Issues: <b class="text-red-600">'+m.symptomatic+'</b><br>Samples: <b>'+(m.samples||'-')+'</b>';
+  document.getElementById('detailPersonality').textContent = m.personality||'';
+  const pct=(m.total_symptoms>0?(m.asymptomatic/m.total_symptoms*100):0).toFixed(0);
+  document.getElementById('detailSymptomList').innerHTML = '<div class="flex justify-between text-xs text-gray-500 mb-1"><span>'+pct+'% healthy</span><span>'+(100-pct)+'% symptomatic</span></div><div class="h-2 bg-gray-200 rounded-full"><div class="h-2 bg-green-500 rounded-full" style="width:'+pct+'%"></div></div><div class="mt-2 text-xs text-gray-500">'+m.symptomatic+' issues out of '+m.total_symptoms+' symptoms tested.</div>';
+  document.getElementById('detailPanel').scrollIntoView({behavior:'smooth'});
 }
-
-function showDetail(modelKey) {
-  document.getElementById('pane-leaderboard').classList.remove('active');
-  document.getElementById('pane-detail').classList.add('active');
-  document.querySelectorAll('.tab-link').forEach(t=>t.classList.remove('active'));
-  const entries = leaderboardData.filter(e=>encodeURIComponent(e.model)===modelKey);
-  const entry = entries.reduce((a,b)=>((a.timestamp||0)>(b.timestamp||0)?a:b), {});
-  if (!entry) return;
-  let html = `<h2 style="font-size:1.5rem;">${entry.model_label||entry.model}</h2>
-    <div style="display:flex;gap:20px;margin:12px 0;flex-wrap:wrap;">
-      <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:${entry.score>=70?'var(--accent)':entry.score>=40?'var(--warning)':'var(--danger)'}">${entry.score.toFixed(1)}</div><div style="font-size:0.75rem;color:var(--text2);text-transform:uppercase;">Health</div></div>
-      <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:var(--accent);">${entry.asymptomatic}</div><div style="font-size:0.75rem;color:var(--text2);text-transform:uppercase;">Asymptomatic</div></div>
-      <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:var(--danger);">${entry.symptomatic}</div><div style="font-size:0.75rem;color:var(--text2);text-transform:uppercase;">Symptomatic</div></div>
-      <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;">${entry.total_symptoms}</div><div style="font-size:0.75rem;color:var(--text2);text-transform:uppercase;">Symptoms</div></div>
-    </div>`;
-
-  if (entry.personality) {
-    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:16px 0;">
-      <h3 style="color:var(--accent);margin-bottom:8px;font-size:0.9rem;">🧠 Personality Profile</h3>
-      <p style="color:var(--text2);line-height:1.7;font-style:italic;">${entry.personality}</p>
-    </div>`;
-  }
-
-  const detail = evalsData[entry.model];
-  if (detail) {
-    const tc = detail.text_checkup||{};
-    const ac = detail.agent_checkup||{};
-
-    if (detail.long_report) {
-      html += `<div class="section-title">Full Evaluation Report</div>
-        <div class="long-report-box">${detail.long_report.replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h2>$1</h2>').replace(/# (.+)/g,'<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</div>`;
-    }
-
-    if (tc.findings?.length) {
-      html += `<div class="section-title">Symptomatic Findings (${tc.findings.length})</div><div class="findings-grid">`;
-      for (const f of tc.findings) {
-        html += `<div class="finding-card"><div class="fid">${f.probe_id}</div><div class="fname">${f.name}</div><div class="fgap" style="color:${f.diagnosis?.includes('SYM')?'var(--danger)':'var(--accent)'}">${f.diagnosis||''}</div><div class="fdim">${f.dimension||''}</div></div>`;
-      }
-      html += `</div>`;
-    }
-
-    if (ac.results && Object.keys(ac.results).length) {
-      html += `<div class="section-title">Agent Runtime (${ac.healthy||'?'}/${ac.total||'?'} passed)</div>`;
-      for (const [sid,r] of Object.entries(ac.results).sort()) {
-        html += `<div class="agent-trace">
-          <div class="call-name" style="color:${r.healthy?'var(--accent)':'var(--danger)'}">${r.healthy?'✅':'❌'} ${sid} ${r.name}</div>
-          <div class="call-detail">${r.tool_calls||0} calls · ${(r.tools_called||[]).join(', ')||'none'}</div>
-        </div>`;
-      }
-    }
-  }
-
-  document.getElementById('detail-content').innerHTML = html;
+function hideDetail(){
+  document.getElementById('detailPanel').classList.add('hidden');
 }
-
-function openModal(model) {
-  const entries = leaderboardData.filter(e => e.model === model);
-  const entry = entries.reduce((a,b)=>((a.timestamp||0)>(b.timestamp||0)?a:b), {});
-  if (entry && entry.personality) {
-    document.getElementById('modal-title').textContent = (entry.model_label || entry.model) + ' — Personality';
-    document.getElementById('modal-content').textContent = entry.personality.replace(/\*\*/g, '');
-    document.getElementById('personality-modal').classList.add('active');
-  }
-}
-function closeModal() { document.getElementById('personality-modal').classList.remove('active'); }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-
-// Event delegation: handle clicks on read-more and personality-cell
-document.addEventListener('click', function(e) {
-  const target = e.target.closest('.read-more, .personality-cell');
-  if (target && target.dataset.model) {
-    openModal(target.dataset.model);
-  }
-});
-
-// Tab switching
-document.querySelectorAll('.tab-link').forEach(a=>{
-  a.addEventListener('click',e=>{
-    e.preventDefault();
-    document.querySelectorAll('.tab-link').forEach(t=>t.classList.remove('active'));
-    a.classList.add('active');
-    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-    document.getElementById('pane-'+a.dataset.tab).classList.add('active');
-  });
-});
-
-loadData();
+init();
 </script>
 </body>
 </html>

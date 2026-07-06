@@ -5,7 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/version-0.3.0-violet" alt="version">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="python">
-  <img src="https://img.shields.io/github/license/joe9939/ai_clinic?color=yellow" alt="license">
+  <img src="https://img.shields.io/github/license/joe9939/AI_Clinic?color=yellow" alt="license">
   <img src="https://img.shields.io/badge/symptoms-116-success" alt="symptoms">
   <img src="https://img.shields.io/badge/tests-96%20passed-green" alt="tests">
   <img src="https://img.shields.io/badge/CLI-ready-orange" alt="cli">
@@ -60,7 +60,7 @@ Every model gets a **Health Score** and an **LLM-generated Personality Profile**
 
 ```bash
 # Install from source (PyPI coming soon)
-git clone https://github.com/joe9939/ai_clinic.git
+git clone https://github.com/joe9939/AI_Clinic.git
 cd ai-clinic
 pip install -e .
 

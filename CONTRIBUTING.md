@@ -45,7 +45,7 @@ Requirements:
 ## Development Setup
 
 ```bash
-git clone https://github.com/joe9939/ai_clinic.git
+git clone https://github.com/joe9939/AI_Clinic.git
 cd ai-clinic
 pip install -e .
 ```

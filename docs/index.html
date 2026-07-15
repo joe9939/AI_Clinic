@@ -14,6 +14,7 @@
     <div class="flex items-center gap-4">
       <a href="#" class="text-blue-600 font-medium text-sm" id="navLeaderboard" onclick="showView('leaderboard');return false">Leaderboard</a>
       <a href="#" class="text-gray-500 hover:text-gray-800 text-sm" id="navSymptoms" onclick="showView('symptoms');return false">Symptoms</a>
+      <a href="#" class="text-gray-500 hover:text-gray-800 text-sm" id="navPricing" onclick="showView('pricing');return false">Pricing</a>
       <a href="#" class="text-gray-500 hover:text-gray-800 text-sm" id="navAbout" onclick="showView('about');return false">About</a>
       <span class="text-xs text-gray-300 ml-2" id="updateTime"></span>
     </div>
@@ -103,9 +104,54 @@
   <div id="viewAbout" class="hidden max-w-2xl">
     <h2 class="text-xl font-semibold mb-4">About AI Clinic</h2>
     <div class="prose text-sm text-gray-600 space-y-3">
-      <p>AI Clinic is a diagnostic framework for LLM behavioral health. Instead of capability, it measures mental health.</p>
-      <p><b>116 symptoms</b> across 15 dimensions, each grounded in peer-reviewed research. A/B comparison with LLM judge.</p>
-      <p><a href="https://github.com/joe9939/AI_Clinic" class="text-blue-500 underline">GitHub</a> &middot; Apache 2.0</p>
+      <p>AI Clinic is a diagnostic framework for LLM behavioral health. Instead of measuring <em>capability</em>, it measures <em>mental health</em> — 119 symptoms across 15 dimensions, each grounded in peer-reviewed research.</p>
+      <p>Each symptom is tested via A/B comparison (control vs experimental prompt) with LLM-as-judge scoring and Wilson 95% confidence intervals.</p>
+      <p><b>Open source:</b> Apache 2.0. <a href="https://github.com/joe9939/AI_Clinic" class="text-blue-500 underline">GitHub</a></p>
+    </div>
+  </div>
+  <div id="viewPricing" class="hidden max-w-4xl">
+    <h2 class="text-xl font-semibold mb-2">Pricing</h2>
+    <p class="text-sm text-gray-500 mb-6">AI Clinic is open-source (Apache 2.0). Cloud features are optional.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border rounded-xl p-5">
+        <div class="text-lg font-bold">Free</div>
+        <div class="text-3xl font-bold my-2">$0</div>
+        <div class="text-xs text-gray-400 mb-4">Open source / Community</div>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li>✓ Public leaderboard access</li>
+          <li>✓ Run checkups via CLI (your API key)</li>
+          <li>✓ All 119 symptoms</li>
+          <li>✓ Clinical personality report</li>
+          <li>✓ GitHub repository access</li>
+        </ul>
+      </div>
+      <div class="bg-white border-2 border-blue-200 rounded-xl p-5 relative">
+        <div class="absolute -top-2.5 right-3 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">Popular</div>
+        <div class="text-lg font-bold">Plus</div>
+        <div class="text-3xl font-bold my-2">$49</div>
+        <div class="text-xs text-gray-400 mb-4">/month · Individual & small teams</div>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li>✓ Everything in Free</li>
+          <li>✓ Private evaluations (off-leaderboard)</li>
+          <li>✓ PDF report export</li>
+          <li>✓ Historical trend tracking</li>
+          <li>✓ Slack / Email notifications</li>
+          <li>✓ 6-month data retention</li>
+        </ul>
+      </div>
+      <div class="bg-white border rounded-xl p-5">
+        <div class="text-lg font-bold">Enterprise</div>
+        <div class="text-3xl font-bold my-2">Custom</div>
+        <div class="text-xs text-gray-400 mb-4">Contact sales</div>
+        <ul class="text-xs space-y-2 text-gray-600">
+          <li>✓ Everything in Plus</li>
+          <li>✓ CI/CD integration</li>
+          <li>✓ Custom symptom dimensions</li>
+          <li>✓ On-premises deployment</li>
+          <li>✓ SSO / RBAC</li>
+          <li>✓ SLA + dedicated support</li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="text-center text-xs text-gray-400 py-8">
@@ -117,12 +163,12 @@ var DIMS={"social":["S-47","S-48","S-49","S-50","S-51","S-52","S-53","S-54","S-5
 var LB=[];var _rF=[];var BASE_URL='';
 
 function showView(v){
-  var views=['leaderboard','report','symptoms','about'];
+  var views=['leaderboard','report','symptoms','about','pricing'];
   for(var i=0;i<views.length;i++){
     document.getElementById('view'+views[i].charAt(0).toUpperCase()+views[i].slice(1)).classList.add('hidden');
   }
   document.getElementById('view'+v.charAt(0).toUpperCase()+v.slice(1)).classList.remove('hidden');
-  var navs=['navLeaderboard','navSymptoms','navAbout'];
+  var navs=['navLeaderboard','navSymptoms','navPricing','navAbout'];
   for(var i=0;i<navs.length;i++){
     var el=document.getElementById(navs[i]);
     el.classList.remove('text-blue-600','font-medium');
